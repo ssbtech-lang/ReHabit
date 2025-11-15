@@ -33,9 +33,19 @@ export default function BottomNavHybrid() {
         <span className="icon">🔥</span>
         <span className="label">Streak</span>
       </div>
-      <div className="nav-item">
-        <span className="icon">⚙️</span>
-        <span className="label">Settings</span>
+      <div 
+        className={`nav-item ${isActive('/challenges') ? 'active' : ''}`}
+        onClick={() => navigate('/challenges')}
+      >
+        <span className="icon">🏆</span>
+        <span className="label">Challenges</span>
+      </div>
+      <div 
+        className={`nav-item ${isActive('/profile') ? 'active' : ''}`}
+        onClick={() => navigate('/profile')}
+      >
+        <span className="icon">👤</span>
+        <span className="label">Profile</span>
       </div>
     </nav>
   );

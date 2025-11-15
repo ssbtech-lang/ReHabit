@@ -1,0 +1,289 @@
+<svg viewBox="0 0 2000 1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Define styles -->
+  <defs>
+    <style>
+      .module-box { fill: #f8f9fa; stroke: #90a4ae; stroke-width: 1.5; }
+      .tts-box { fill: #fff3cd; stroke: #ffa726; stroke-width: 1.5; }
+      .audio-box { fill: #e1f5fe; stroke: #4fc3f7; stroke-width: 1.5; }
+      .image-box { fill: #f3e5f5; stroke: #ba68c8; stroke-width: 1.5; }
+      .text-box { fill: #e8f5e9; stroke: #66bb6a; stroke-width: 1.5; }
+      .core-box { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; }
+      .output-box { fill: #fce4ec; stroke: #ec407a; stroke-width: 1.5; }
+      .merge-box { fill: #fff9e6; stroke: #ffb74d; stroke-width: 1.5; }
+      .response-box { fill: #fff3e0; stroke: #ff9800; stroke-width: 2; }
+      
+      .title-text { font-family: 'Arial', sans-serif; font-size: 14px; font-weight: bold; fill: #263238; }
+      .subtitle-text { font-family: 'Arial', sans-serif; font-size: 12px; fill: #455a64; }
+      .small-text { font-family: 'Arial', sans-serif; font-size: 11px; fill: #546e7a; }
+      .tiny-text { font-family: 'Arial', sans-serif; font-size: 10px; fill: #607d8b; }
+      .label-text { font-family: 'Arial', sans-serif; font-size: 11px; fill: #37474f; font-weight: 600; }
+      .code-text { font-family: 'Courier New', monospace; font-size: 10px; fill: #d32f2f; }
+      
+      .arrow { stroke: #78909c; stroke-width: 1.8; fill: none; marker-end: url(#arrowhead); }
+      .data-arrow { stroke: #1976d2; stroke-width: 2; fill: none; marker-end: url(#arrowhead-blue); }
+      .audio-arrow { stroke: #0288d1; stroke-width: 2; fill: none; marker-end: url(#arrowhead-audio); }
+    </style>
+    
+    <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#78909c" />
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#1976d2" />
+    </marker>
+    <marker id="arrowhead-audio" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#0288d1" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="1000" y="35" text-anchor="middle" style="font-family: Arial; font-size: 22px; font-weight: bold; fill: #1a237e;">🎬 MultiTalk System Architecture</text>
+  <text x="1000" y="58" text-anchor="middle" style="font-family: Arial; font-size: 13px; fill: #546e7a;">Multi-Speaker Lip-Sync Generation Pipeline</text>
+
+  <!-- SECTION 1: FRONTEND -->
+  <rect x="40" y="120" width="200" height="180" class="module-box" rx="6"/>
+  <text x="140" y="145" text-anchor="middle" class="title-text">⚛️ React Frontend</text>
+  <line x1="55" y1="155" x2="225" y2="155" stroke="#90a4ae" stroke-width="1"/>
+  
+  <text x="60" y="178" class="small-text">📷 • Image upload</text>
+  <text x="60" y="198" class="small-text">🎵 • Audio upload (1–3 speakers)</text>
+  <text x="70" y="215" class="tiny-text">📝 OR TTS text</text>
+  <text x="60" y="235" class="small-text">💬 • Text prompt</text>
+  <text x="60" y="255" class="small-text">👥 • Speaker selection (for TTS)</text>
+  
+  <rect x="55" y="270" width="170" height="20" style="fill: #eceff1; stroke: #607d8b; stroke-width: 1;" rx="3"/>
+  <text x="140" y="284" text-anchor="middle" class="tiny-text" style="font-style: italic;">POST /api/generate</text>
+
+  <!-- Arrow: Frontend to Backend -->
+  <path d="M 240 210 Q 280 210, 280 210 L 320 210" class="arrow"/>
+  <text x="280" y="200" text-anchor="middle" class="label-text">📦 FormData</text>
+  <text x="280" y="230" text-anchor="middle" class="tiny-text">(image, audio/text, prompt)</text>
+
+  <!-- SECTION 2: BACKEND ENTRY -->
+  <rect x="320" y="100" width="240" height="300" class="module-box" rx="6"/>
+  <text x="440" y="125" text-anchor="middle" class="title-text">🐍 Flask Backend</text>
+  <text x="440" y="142" text-anchor="middle" class="subtitle-text">(server.py — input handling & job creation)</text>
+  <line x1="335" y1="152" x2="545" y2="152" stroke="#90a4ae" stroke-width="1"/>
+
+  <!-- TTS Path -->
+  <rect x="335" y="165" width="210" height="75" class="tts-box" rx="4"/>
+  <text x="440" y="183" text-anchor="middle" class="subtitle-text" style="fill: #f57c00;">🎯 A. TTS Path (Kokoro TTS)</text>
+  <text x="345" y="202" class="small-text">• Input: image + prompt</text>
+  <text x="345" y="220" class="small-text">• Generates speaker1-3.wav</text>
+  <text x="345" y="235" class="tiny-text">• Files saved in job folder</text>
+
+  <!-- Direct Audio Path -->
+  <rect x="335" y="250" width="210" height="70" class="audio-box" rx="4"/>
+  <text x="440" y="268" text-anchor="middle" class="subtitle-text" style="fill: #0288d1;">🎵 B. Direct Audio Path</text>
+  <text x="345" y="287" class="small-text">• Input: image + audio</text>
+  <text x="345" y="305" class="small-text">• Stores speaker1-3.wav in job folder</text>
+
+  <!-- Merge box -->
+  <rect x="335" y="330" width="210" height="28" class="merge-box" rx="4"/>
+  <text x="440" y="349" text-anchor="middle" class="small-text" style="fill: #ef6c00; font-weight: bold;">💾 Audio stored in job folder</text>
+
+  <!-- Arrow from Flask Backend to Audio Preprocessing -->
+  <!-- <path d="M 440 380 Q 440 420, 520 420 L 600 420" class="audio-arrow"/>
+  <text x="520" y="410" text-anchor="middle" class="label-text">🎵 Audio Files</text>
+  <text x="520" y="430" text-anchor="middle" class="tiny-text">speaker1.wav, speaker2.wav, speaker3.wav</text> -->
+
+  <!-- SECTION 3: AUDIO PREPROCESSING -->
+  <rect x="600" y="100" width="230" height="270" class="audio-box" rx="6"/>
+  <text x="715" y="125" text-anchor="middle" class="title-text" style="fill: #0277bd;">🎵 Audio Preprocessing</text>
+  <text x="715" y="142" text-anchor="middle" class="subtitle-text">(Wav2Vec2)</text>
+  <line x1="615" y1="152" x2="815" y2="152" stroke="#4fc3f7" stroke-width="1"/>
+
+  <rect x="615" y="165" width="200" height="28" style="fill: white; stroke: #4fc3f7; stroke-width: 1;" rx="3"/>
+  <text x="715" y="183" text-anchor="middle" class="small-text">1. Load audio files</text>
+
+  <rect x="615" y="203" width="200" height="28" style="fill: white; stroke: #4fc3f7; stroke-width: 1;" rx="3"/>
+  <text x="715" y="221" text-anchor="middle" class="small-text">2. Resample & normalize</text>
+
+  <rect x="615" y="241" width="200" height="28" style="fill: white; stroke: #4fc3f7; stroke-width: 1;" rx="3"/>
+  <text x="715" y="259" text-anchor="middle" class="small-text">3. Wav2Vec2 feature extractor</text>
+
+  <rect x="615" y="279" width="200" height="28" style="fill: white; stroke: #4fc3f7; stroke-width: 1;" rx="3"/>
+  <text x="715" y="297" text-anchor="middle" class="small-text">4. Wav2Vec2 encoder</text>
+
+  <rect x="615" y="317" width="200" height="40" style="fill: #b3e5fc; stroke: #0277bd; stroke-width: 1.5;" rx="4"/>
+  <text x="715" y="335" text-anchor="middle" class="subtitle-text" style="fill: #01579b; font-weight: bold;">Audio Embeddings</text>
+  <text x="715" y="350" text-anchor="middle" class="tiny-text" style="fill: #0277bd;">(per speaker)</text>
+
+  <!-- Arrow: Audio to WAN (curved right) -->
+  <path d="M 830 285 Q 900 285, 900 480 L 960 480" class="data-arrow"/>
+  <text x="870" y="275" text-anchor="middle" class="label-text">Audio</text>
+  <text x="870" y="290" text-anchor="middle" class="label-text">Embeddings</text>
+
+  <!-- SECTION 4: IMAGE PROCESSING & CLIP -->
+  <rect x="600" y="400" width="230" height="210" class="image-box" rx="6"/>
+  <text x="715" y="425" text-anchor="middle" class="title-text" style="fill: #7b1fa2;">🖼️ Image Preprocessing +</text>
+  <text x="715" y="442" text-anchor="middle" class="title-text" style="fill: #7b1fa2;">CLIP Visual Encoder</text>
+  <line x1="615" y1="452" x2="815" y2="452" stroke="#ba68c8" stroke-width="1"/>
+
+  <rect x="615" y="465" width="200" height="28" style="fill: white; stroke: #ba68c8; stroke-width: 1;" rx="3"/>
+  <text x="715" y="483" text-anchor="middle" class="small-text">• Resize + center crop</text>
+
+  <rect x="615" y="503" width="200" height="28" style="fill: white; stroke: #ba68c8; stroke-width: 1;" rx="3"/>
+  <text x="715" y="521" text-anchor="middle" class="small-text">• Normalize ([-1, 1])</text>
+
+  <rect x="615" y="541" width="200" height="28" style="fill: white; stroke: #ba68c8; stroke-width: 1;" rx="3"/>
+  <text x="715" y="559" text-anchor="middle" class="small-text">• 3D VAE Encoder → Image Latent</text>
+
+  <rect x="615" y="579" width="200" height="20" style="fill: #e1bee7; stroke: #7b1fa2; stroke-width: 1.5;" rx="3"/>
+  <text x="715" y="593" text-anchor="middle" class="tiny-text" style="fill: #4a148c; font-weight: bold;">• CLIP ViT-H → Visual Embedding</text>
+
+  <!-- Arrow: Backend to Image (curved down) -->
+  <path d="M 560 250 Q 580 250, 580 505 L 600 505" class="arrow"/>
+  <text x="590" y="370" text-anchor="middle" class="label-text" style="writing-mode: tb;">🖼️ image</text>
+
+  <!-- Arrow: Image to WAN -->
+  <path d="M 830 505 Q 890 505, 890 530 L 960 530" class="data-arrow"/>
+  <text x="900" y="495" text-anchor="middle" class="label-text">image + latent</text>
+  <text x="900" y="510" text-anchor="middle" class="label-text">+ CLIP</text>
+
+  <!-- SECTION 5: TEXT ENCODING -->
+  <rect x="600" y="640" width="230" height="90" class="text-box" rx="6"/>
+  <text x="715" y="665" text-anchor="middle" class="title-text" style="fill: #2e7d32;">💬 Text Encoding</text>
+  <text x="715" y="682" text-anchor="middle" class="subtitle-text">(UMT5 Encoder)</text>
+  <line x1="615" y1="692" x2="815" y2="692" stroke="#66bb6a" stroke-width="1"/>
+
+  <rect x="615" y="702" width="200" height="20" style="fill: #c8e6c9; stroke: #2e7d32; stroke-width: 1.5;" rx="3"/>
+  <text x="715" y="716" text-anchor="middle" class="small-text" style="fill: #1b5e20; font-weight: bold;">Text Embedding</text>
+
+  <!-- Arrow: Backend to Text (curved down) -->
+  <path d="M 560 300 Q 590 300, 590 685 L 600 685" class="arrow"/>
+  <text x="595" y="490" text-anchor="middle" class="label-text" style="writing-mode: tb;">💬 prompt</text>
+
+  <!-- Arrow: Text to WAN -->
+  <path d="M 830 685 Q 880 685, 880 600 L 960 600" class="data-arrow"/>
+  <text x="900" y="640" text-anchor="middle" class="label-text">prompt →</text>
+  <text x="900" y="655" text-anchor="middle" class="label-text">embedding</text>
+
+  <!-- SECTION 6: WAN MULTITALK CORE -->
+  <rect x="960" y="420" width="340" height="330" class="core-box" rx="8"/>
+  <text x="1130" y="450" text-anchor="middle" style="font-family: Arial; font-size: 16px; font-weight: bold; fill: #0d47a1;">🤖 WAN MultiTalk</text>
+  <text x="1130" y="468" text-anchor="middle" style="font-family: Arial; font-size: 13px; fill: #1565c0;">Core Diffusion Model</text>
+  <line x1="975" y1="478" x2="1285" y2="478" stroke="#1976d2" stroke-width="1.5"/>
+
+  <!-- Input box -->
+  <rect x="975" y="488" width="310" height="60" style="fill: #bbdefb; stroke: #1976d2; stroke-width: 1.5;" rx="4"/>
+  <text x="1130" y="505" text-anchor="middle" class="subtitle-text" style="fill: #01579b; font-weight: bold;">Inputs:</text>
+  <text x="1130" y="521" text-anchor="middle" class="tiny-text" style="fill: #0277bd;">• Text Embedding • Image Latent</text>
+  <text x="1130" y="536" text-anchor="middle" class="tiny-text" style="fill: #0277bd;">• CLIP Visual Embedding • Audio Embeddings (1–3 speakers)</text>
+
+  <!-- Sub-modules in two columns -->
+  <rect x="985" y="560" width="145" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1057" y="576" text-anchor="middle" class="small-text">LRoPE Positional Encoding</text>
+
+  <rect x="1140" y="560" width="135" height="24" style="fill: white; stroke: #64b5f7; stroke-width: 1;" rx="3"/>
+  <text x="1207" y="576" text-anchor="middle" class="small-text">3D Transformer Blocks</text>
+
+  <rect x="985" y="594" width="145" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1057" y="610" text-anchor="middle" class="small-text">Text Cross-Attention</text>
+
+  <rect x="1140" y="594" width="135" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1207" y="610" text-anchor="middle" class="small-text">Audio Cross-Attention</text>
+  <!-- <text x="1207" y="615" text-anchor="middle" class="tiny-text" style="fill: #0277bd;">(1–3 speakers)</text> -->
+
+  <rect x="985" y="628" width="145" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1057" y="644" text-anchor="middle" class="small-text">CLIP Cross-Conditioning</text>
+
+  <rect x="1140" y="628" width="135" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1207" y="644" text-anchor="middle" class="small-text">Feed Forward Layers</text>
+
+  <rect x="985" y="662" width="145" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1057" y="678" text-anchor="middle" class="small-text">Motion Injection Window</text>
+
+  <rect x="1140" y="662" width="135" height="24" style="fill: white; stroke: #64b5f6; stroke-width: 1;" rx="3"/>
+  <text x="1207" y="678" text-anchor="middle" class="small-text">Multi-Speaker Spatial Masks</text>
+
+  <!-- Output box -->
+  <rect x="975" y="700" width="310" height="35" style="fill: #90caf9; stroke: #0d47a1; stroke-width: 2;" rx="4"/>
+  <text x="1130" y="722" text-anchor="middle" class="subtitle-text" style="fill: #01579b; font-weight: bold;">Refined Video Latent Sequence</text>
+
+  <!-- Arrow: WAN to Video Generation -->
+  <path d="M 1300 585 L 1360 585" class="data-arrow"/>
+
+  <!-- SECTION 7: VIDEO GENERATION -->
+  <rect x="1360" y="420" width="260" height="280" class="output-box" rx="6"/>
+  <text x="1490" y="450" text-anchor="middle" class="title-text" style="fill: #c2185b;">🎥 Video Generation</text>
+  <text x="1490" y="467" text-anchor="middle" class="title-text" style="fill: #c2185b;">& Assembly</text>
+  <line x1="1375" y1="477" x2="1605" y2="477" stroke="#ec407a" stroke-width="1"/>
+
+  <rect x="1375" y="490" width="230" height="40" style="fill: white; stroke: #ec407a; stroke-width: 1;" rx="3"/>
+  <text x="1490" y="507" text-anchor="middle" class="small-text">1. 3D VAE Decoder</text>
+  <text x="1490" y="522" text-anchor="middle" class="tiny-text">(latents → frames)</text>
+
+  <rect x="1375" y="540" width="230" height="40" style="fill: white; stroke: #ec407a; stroke-width: 1;" rx="3"/>
+  <text x="1490" y="557" text-anchor="middle" class="small-text">2. Color Correction</text>
+  <text x="1490" y="572" text-anchor="middle" class="tiny-text">(match_and_blend_colors)</text>
+
+  <rect x="1375" y="590" width="230" height="40" style="fill: white; stroke: #ec407a; stroke-width: 1;" rx="3"/>
+  <text x="1490" y="607" text-anchor="middle" class="small-text">3. FFmpeg Assembly</text>
+  <text x="1490" y="622" text-anchor="middle" class="tiny-text">(frames + audio → MP4)</text>
+
+  <rect x="1375" y="640" width="230" height="45" style="fill: #f8bbd0; stroke: #ad1457; stroke-width: 1.5;" rx="4"/>
+  <text x="1490" y="658" text-anchor="middle" class="subtitle-text" style="fill: #880e4f; font-weight: bold;">🎬 Output:</text>
+  <text x="1490" y="675" text-anchor="middle" class="tiny-text" style="fill: #ad1457;">final_video.mp4 (saved in /outputs/{job_id})</text>
+  <!-- <text x="1490" y="680" text-anchor="middle" class="tiny-text" style="fill: #ad1457;">saved in /outputs/{job_id}</text> -->
+
+ <!-- SECTION 8: RESPONSE TO FRONTEND (Separate Block) -->
+<rect x="1330" y="740" width="340" height="220" class="response-box" rx="6"/>
+<text x="1500" y="765" text-anchor="middle" class="title-text" style="fill: #e65100; font-size: 13px;">📨 RESPONSE TO FRONTEND</text>
+<line x1="1340" y1="780" x2="1660" y2="780" stroke="#ff9800" stroke-width="1"/>
+
+<text x="1345" y="800" class="small-text" style="fill: #e65100; font-weight: bold;">Backend sends:</text>
+<rect x="1345" y="808" width="310" height="48" style="fill: #fff8e1; stroke: #ffb74d; stroke-width: 1;" rx="3"/>
+<text x="1355" y="820" class="code-text">{</text>
+<text x="1355" y="832" class="code-text">  "job_id": "...",</text>
+<text x="1355" y="844" class="code-text">  "status": "processing"</text>
+<text x="1355" y="856" class="code-text">}</text>
+
+<text x="1345" y="875" class="small-text" style="fill: #e65100; font-weight: bold;">React starts polling:</text>
+<rect x="1345" y="883" width="310" height="28" style="fill: #fff8e1; stroke: #ffb74d; stroke-width: 1;" rx="3"/>
+<text x="1355" y="898" class="code-text">GET /status/&lt;job_id&gt;</text>
+
+<text x="1345" y="925" class="small-text" style="fill: #e65100; font-weight: bold;">When ready:</text>
+<rect x="1345" y="933" width="310" height="28" style="fill: #fff8e1; stroke: #ffb74d; stroke-width: 1;" rx="3"/>
+<text x="1355" y="948" class="code-text">GET /video/&lt;job_id&gt;</text>
+
+<!-- Arrow from Video Generation to Response Block -->
+<path d="M 1500 685 L 1500 740" class="arrow"/>
+<text x="1500" y="720" text-anchor="middle" class="label-text">Video Ready</text>
+
+<!-- Arrow: Return to Frontend (Fixed overlapping) -->
+<path d="M 1500 960 L 1500 1020 Q 1500 1050, 1460 1050 L 240 1050 Q 210 1050, 210 1020 L 210 300" class="arrow"/>
+<text x="1500" y="1000" text-anchor="middle" class="label-text">job_id + video_url</text>
+<text x="850" y="1070" text-anchor="middle" class="tiny-text">Frontend polls: GET /status/job_id  |  Retrieves: GET /video/job_id</text>
+  <!-- Frontend Video Player -->
+  <rect x="40" y="330" width="200" height="80" style="fill: #c8e6c9; stroke: #388e3c; stroke-width: 1.5;" rx="6"/>
+  <text x="140" y="355" text-anchor="middle" class="title-text" style="fill: #1b5e20;">⚛️ React Frontend</text>
+  <text x="140" y="372" text-anchor="middle" class="subtitle-text" style="fill: #2e7d32;">Video Player</text>
+  <line x1="55" y1="382" x2="225" y2="382" stroke="#66bb6a" stroke-width="1"/>
+  <text x="140" y="400" text-anchor="middle" class="small-text" style="fill: #2e7d32;">🎬 Shows final generated video</text>
+
+  <!-- Legend -->
+<rect x="40" y="1080" width="1580" height="90" style="fill: #fafafa; stroke: #bdbdbd; stroke-width: 1;" rx="5"/>
+<text x="830" y="1100" text-anchor="middle" style="font-family: Arial; font-size: 13px; font-weight: bold; fill: #424242;">Pipeline Flow</text>
+
+<text x="60" y="1125" class="tiny-text" style="font-weight: bold;">📊 Data Flow:</text>
+<text x="60" y="1140" class="tiny-text">1. User uploads via React → 2. Flask processes (TTS or direct audio) → 3. Audio embeddings (Wav2Vec2)</text>
+<text x="60" y="1155" class="tiny-text">4. Image latents + CLIP embeddings → 5. Text embeddings (UMT5) → 6. WAN MultiTalk diffusion processing</text>
+<text x="60" y="1170" class="tiny-text">7. Video decoding + color correction + FFmpeg → 8. Backend returns job_id → Frontend polls and displays video</text>
+
+<rect x="1100" y="1115" width="35" height="18" class="tts-box" rx="2"/>
+<text x="1145" y="1128" class="tiny-text">TTS Path</text>
+
+<rect x="1250" y="1115" width="35" height="18" class="audio-box" rx="2"/>
+<text x="1295" y="1128" class="tiny-text">Audio Processing</text>
+
+<rect x="1430" y="1115" width="35" height="18" class="image-box" rx="2"/>
+<text x="1475" y="1128" class="tiny-text">Image Processing</text>
+
+<rect x="1100" y="1145" width="35" height="18" class="text-box" rx="2"/>
+<text x="1145" y="1158" class="tiny-text">Text Encoding</text>
+
+<rect x="1250" y="1145" width="35" height="18" class="core-box" rx="2"/>
+<text x="1295" y="1158" class="tiny-text">Core Model</text>
+
+<rect x="1430" y="1145" width="35" height="18" class="output-box" rx="2"/>
+<text x="1475" y="1158" class="tiny-text">Output Generation</text>
