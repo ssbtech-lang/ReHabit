@@ -21,7 +21,6 @@
 
 .auth-page-background {
   min-height: 100vh;
-  /* background: linear-gradient(135deg, var(--black) 0%, #2d1b1b 100%); */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,7 +35,6 @@
   width: 100%;
   max-width: 1000px;
   min-height: 600px;
-  height: auto;
   background: var(--white);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   border-radius: 20px;
@@ -57,7 +55,7 @@
 }
 
 /* Welcome Section */
-.auth-page-background .auth-container .welcome-section {
+.auth-page-background .welcome-section {
   flex: 1;
   background: linear-gradient(135deg, var(--black) 0%, #2d1b1b 100%);
   color: var(--white);
@@ -68,7 +66,7 @@
   overflow: hidden;
 }
 
-.auth-page-background .auth-container .background-animation {
+.auth-page-background .background-animation {
   position: absolute;
   top: 0;
   left: 0;
@@ -77,7 +75,7 @@
   z-index: 1;
 }
 
-.auth-page-background .auth-container .floating-circle {
+.auth-page-background .floating-circle {
   position: absolute;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--red) 0%, var(--marsala) 100%);
@@ -85,7 +83,7 @@
   animation: auth-float 8s ease-in-out infinite;
 }
 
-.auth-page-background .auth-container .circle-1 {
+.auth-page-background .circle-1 {
   width: 150px;
   height: 150px;
   top: -30px;
@@ -93,7 +91,7 @@
   animation-delay: 0s;
 }
 
-.auth-page-background .auth-container .circle-2 {
+.auth-page-background .circle-2 {
   width: 100px;
   height: 100px;
   bottom: 50px;
@@ -110,28 +108,19 @@
   }
 }
 
-.auth-page-background .auth-container .welcome-content {
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
 /* Logo */
-.auth-page-background .auth-container .logo-container {
+.auth-page-background .logo-container {
   margin-bottom: 40px;
   animation: auth-slideInLeft 0.8s ease-out;
 }
 
-.auth-page-background .auth-container .logo {
+.auth-page-background .logo {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-.auth-page-background .auth-container .logo-emoji {
+.auth-page-background .logo-emoji {
   font-size: 40px;
   background: linear-gradient(135deg, var(--red) 0%, var(--marsala) 100%);
   border-radius: 12px;
@@ -143,46 +132,41 @@
   box-shadow: 0 8px 32px rgba(214, 48, 76, 0.3);
 }
 
-.auth-page-background .auth-container .logo-text h1 {
+.auth-page-background .logo-text h1 {
   font-size: 28px;
   font-weight: 700;
   background: linear-gradient(135deg, var(--white) 0%, var(--marsala) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  margin-bottom: 4px;
 }
 
-.auth-page-background .auth-container .logo-text span {
+.auth-page-background .logo-text span {
   font-size: 13px;
   color: rgba(255, 250, 254, 0.7);
-  font-weight: 500;
 }
 
 /* Welcome Text */
-.auth-page-background .auth-container .welcome-text {
+.auth-page-background .welcome-text {
   margin-bottom: 40px;
-  animation: auth-slideInLeft 0.8s ease-out 0.2s both;
 }
 
-.auth-page-background .auth-container .welcome-text h2 {
+.auth-page-background .welcome-text h2 {
   font-size: 32px;
   font-weight: 600;
   margin-bottom: 12px;
-  line-height: 1.2;
 }
 
-.auth-page-background .auth-container .welcome-text p {
+.auth-page-background .welcome-text p {
   font-size: 16px;
   color: rgba(255, 250, 254, 0.8);
-  line-height: 1.5;
 }
 
-/* Features List */
-.auth-page-background .auth-container .features-list {
+/* Features */
+.auth-page-background .features-list {
   animation: auth-slideInLeft 0.8s ease-out 0.4s both;
 }
 
-.auth-page-background .auth-container .feature-item {
+.auth-page-background .feature-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -190,27 +174,10 @@
   padding: 12px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
-  transition: all 0.3s ease;
-}
-
-.auth-page-background .auth-container .feature-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateX(5px);
-}
-
-.auth-page-background .auth-container .feature-icon {
-  font-size: 20px;
-  width: 24px;
-  text-align: center;
-}
-
-.auth-page-background .auth-container .feature-item span:last-child {
-  font-weight: 500;
-  font-size: 14px;
 }
 
 /* Form Section */
-.auth-page-background .auth-container .form-section {
+.auth-page-background .form-section {
   flex: 0 0 450px;
   padding: 40px;
   display: flex;
@@ -219,45 +186,46 @@
   background: var(--white);
 }
 
-.auth-page-background .auth-container .form-container {
+.auth-page-background .form-container {
   width: 100%;
   max-width: 320px;
   margin: 0 auto;
 }
 
-.auth-page-background .auth-container .form-header {
+.auth-page-background .form-header {
   margin-bottom: 30px;
-  animation: auth-fadeIn 0.8s ease-out 0.2s both;
 }
 
-.auth-page-background .auth-container .form-title {
+.auth-page-background .form-title {
   font-size: 28px;
   color: var(--black);
   margin-bottom: 8px;
   font-weight: 600;
 }
 
-.auth-page-background .auth-container .form-subtitle {
+.auth-page-background .form-subtitle {
   color: var(--medium-gray);
   font-size: 14px;
 }
 
 /* Form Elements */
-.auth-page-background .auth-container .auth-form {
-  animation: auth-fadeIn 0.8s ease-out 0.4s both;
+.auth-page-background .auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.auth-page-background .auth-container .form-group {
-  margin-bottom: 20px;
+.auth-page-background .form-group {
+  margin-bottom: 0;
 }
 
-.auth-page-background .auth-container .input-container {
+.auth-page-background .input-container {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.auth-page-background .auth-container .form-input {
+.auth-page-background .form-input {
   width: 100%;
   padding: 15px 15px 15px 45px;
   border: 2px solid var(--border-gray);
@@ -269,25 +237,20 @@
   font-family: inherit;
 }
 
-.auth-page-background .auth-container .form-input:focus {
+.auth-page-background .form-input:focus {
   border-color: var(--red);
   outline: none;
   box-shadow: 0 0 0 3px rgba(214, 48, 76, 0.1);
 }
 
-.auth-page-background .auth-container .input-icon {
+.auth-page-background .input-icon {
   position: absolute;
   left: 15px;
   font-size: 16px;
   z-index: 2;
-  transition: color 0.3s ease;
 }
 
-.auth-page-background .auth-container .form-input:focus + .input-icon {
-  color: var(--red);
-}
-
-.auth-page-background .auth-container .password-toggle {
+.auth-page-background .password-toggle {
   position: absolute;
   right: 12px;
   background: none;
@@ -299,12 +262,12 @@
   transition: all 0.3s ease;
 }
 
-.auth-page-background .auth-container .password-toggle:hover {
+.auth-page-background .password-toggle:hover {
   background: rgba(214, 48, 76, 0.1);
 }
 
 /* Buttons */
-.auth-page-background .auth-container .btn {
+.auth-page-background .btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,23 +284,23 @@
   overflow: hidden;
 }
 
-.auth-page-background .auth-container .btn-primary {
+.auth-page-background .btn-primary {
   background: linear-gradient(135deg, var(--red) 0%, var(--marsala) 100%);
   color: var(--white);
 }
 
-.auth-page-background .auth-container .btn-primary:hover:not(:disabled) {
+.auth-page-background .btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(214, 48, 76, 0.3);
 }
 
-.auth-page-background .auth-container .btn:disabled {
+.auth-page-background .btn:disabled {
   opacity: 0.7;
   cursor: not-allowed;
   transform: none !important;
 }
 
-.auth-page-background .auth-container .btn-spinner {
+.auth-page-background .btn-spinner {
   width: 16px;
   height: 16px;
   border: 2px solid transparent;
@@ -353,7 +316,7 @@
 }
 
 /* Form Options */
-.auth-page-background .auth-container .form-options {
+.auth-page-background .form-options {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -361,7 +324,7 @@
   font-size: 13px;
 }
 
-.auth-page-background .auth-container .checkbox-container {
+.auth-page-background .checkbox-container {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -369,11 +332,11 @@
   color: var(--medium-gray);
 }
 
-.auth-page-background .auth-container .checkbox-container input {
+.auth-page-background .checkbox-container input {
   display: none;
 }
 
-.auth-page-background .auth-container .checkmark {
+.auth-page-background .checkmark {
   width: 16px;
   height: 16px;
   border: 2px solid var(--border-gray);
@@ -382,12 +345,12 @@
   transition: all 0.3s ease;
 }
 
-.auth-page-background .auth-container .checkbox-container input:checked + .checkmark {
+.auth-page-background .checkbox-container input:checked + .checkmark {
   background: var(--red);
   border-color: var(--red);
 }
 
-.auth-page-background .auth-container .checkbox-container input:checked + .checkmark::after {
+.auth-page-background .checkbox-container input:checked + .checkmark::after {
   content: '✓';
   position: absolute;
   color: white;
@@ -397,27 +360,26 @@
   transform: translate(-50%, -50%);
 }
 
-.auth-page-background .auth-container .forgot-link {
+.auth-page-background .forgot-link {
   color: var(--red);
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
-.auth-page-background .auth-container .forgot-link:hover {
+.auth-page-background .forgot-link:hover {
   color: var(--marsala);
 }
 
 /* Form Footer */
-.auth-page-background .auth-container .form-footer {
+.auth-page-background .form-footer {
   text-align: center;
   margin-top: 25px;
   color: var(--medium-gray);
   font-size: 13px;
-  animation: auth-fadeIn 0.8s ease-out 0.6s both;
 }
 
-.auth-page-background .auth-container .link-btn {
+.auth-page-background .link-btn {
   background: none;
   border: none;
   color: var(--red);
@@ -429,33 +391,12 @@
   font-size: inherit;
 }
 
-.auth-page-background .auth-container .link-btn:hover {
+.auth-page-background .link-btn:hover {
   color: var(--marsala);
 }
 
-/* Animation Utilities */
-@keyframes auth-slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes auth-fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 /* Error Message Styles */
-.auth-page-background .auth-container .error-message {
+.auth-page-background .error-message {
   background: rgba(214, 48, 76, 0.1);
   border: 1px solid var(--red);
   color: var(--red);
@@ -464,187 +405,75 @@
   margin-bottom: 20px;
   font-size: 14px;
   font-weight: 500;
-  animation: auth-shake 0.5s ease-in-out;
 }
 
-@keyframes auth-shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-5px); }
-  75% { transform: translateX(5px); }
-}
+/* --------------------------------------------------------- */
+/* RESPONSIVE FIX – HIDE LEFT PANEL ON SMALL SCREENS          */
+/* --------------------------------------------------------- */
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .auth-page-background {
-    padding: 15px;
-    align-items: flex-start;
-    min-height: 100vh;
-    height: auto;
+    padding: 20px;
+    align-items: center;
   }
 
+  /* Hide the left black section entirely */
+  .auth-page-background .welcome-section {
+    display: none;
+  }
+
+  /* Make form section take full container */
   .auth-page-background .auth-container {
-    flex-direction: column;
-    height: auto;
+    width: 100%;
+    max-width: 450px; /* Same width as the form section was originally */
     min-height: auto;
-    max-height: none;
-    margin: 20px 0;
   }
 
-  .auth-page-background .auth-container .welcome-section {
-    padding: 30px;
-    flex: none;
-    min-height: 300px;
+  .auth-page-background .form-section {
+    flex: 1;
+    width: 100%;
+    padding: 40px; /* Keep the same padding */
   }
 
-  .auth-page-background .auth-container .form-section {
-    padding: 30px;
-    flex: none;
-  }
-
-  .auth-page-background .auth-container .logo-emoji {
-    width: 50px;
-    height: 50px;
-    font-size: 32px;
-  }
-
-  .auth-page-background .auth-container .logo-text h1 {
-    font-size: 24px;
-  }
-
-  .auth-page-background .auth-container .welcome-text h2 {
-    font-size: 28px;
+  /* Keep all form styles exactly the same */
+  .auth-page-background .form-container {
+    max-width: 320px; /* Keep the same max-width */
+    margin: 0 auto; /* Keep centered */
   }
 }
 
+/* Even smaller screens */
 @media (max-width: 480px) {
   .auth-page-background {
-    padding: 10px;
-    align-items: flex-start;
+    padding: 15px;
   }
 
   .auth-page-background .auth-container {
     border-radius: 15px;
-    margin: 10px 0;
   }
 
-  .auth-page-background .auth-container .welcome-section,
-  .auth-page-background .auth-container .form-section {
-    padding: 25px;
+  .auth-page-background .form-section {
+    padding: 30px; /* Slightly reduce padding on very small screens */
   }
 
-  .auth-page-background .auth-container .logo {
-    gap: 12px;
-  }
-
-  .auth-page-background .auth-container .logo-emoji {
-    width: 45px;
-    height: 45px;
-    font-size: 28px;
-  }
-
-  .auth-page-background .auth-container .logo-text h1 {
-    font-size: 22px;
-  }
-
-  .auth-page-background .auth-container .logo-text span {
-    font-size: 12px;
-  }
-
-  .auth-page-background .auth-container .welcome-text h2 {
-    font-size: 24px;
-  }
-
-  .auth-page-background .auth-container .welcome-text p {
-    font-size: 14px;
-  }
-
-  .auth-page-background .auth-container .form-title {
-    font-size: 24px;
-  }
-
-  .auth-page-background .auth-container .form-input {
-    padding: 12px 12px 12px 40px;
-    font-size: 14px;
-  }
-
-  .auth-page-background .auth-container .btn {
-    padding: 14px;
-    font-size: 14px;
-  }
-
-  .auth-page-background .auth-container .feature-item {
-    padding: 10px;
-    font-size: 13px;
+  /* Keep all other form styles exactly the same */
+  .auth-page-background .form-container {
+    max-width: 320px; /* Maintain same form width */
   }
 }
 
-/* Height adjustments */
-@media (max-height: 700px) and (min-width: 769px) {
-  .auth-page-background .auth-container {
-    height: 550px;
-  }
-  
-  .auth-page-background .auth-container .welcome-section,
-  .auth-page-background .auth-container .form-section {
-    padding: 30px;
-  }
-  
-  .auth-page-background .auth-container .logo-container {
-    margin-bottom: 30px;
-  }
-  
-  .auth-page-background .auth-container .welcome-text {
-    margin-bottom: 30px;
-  }
-  
-  .auth-page-background .auth-container .feature-item {
-    margin-bottom: 12px;
-    padding: 10px;
-  }
-}
-
-@media (max-height: 600px) and (min-width: 769px) {
-  .auth-page-background .auth-container {
-    height: 500px;
-  }
-  
-  .auth-page-background .auth-container .welcome-section,
-  .auth-page-background .auth-container .form-section {
-    padding: 25px;
-  }
-  
-  .auth-page-background .auth-container .logo-container {
-    margin-bottom: 20px;
-  }
-  
-  .auth-page-background .auth-container .welcome-text {
-    margin-bottom: 20px;
-  }
-  
-  .auth-page-background .auth-container .welcome-text h2 {
-    font-size: 24px;
-    margin-bottom: 8px;
-  }
-  
-  .auth-page-background .auth-container .feature-item {
-    margin-bottom: 8px;
-    padding: 8px;
-    font-size: 12px;
-  }
-}
-
-/* Ensure proper centering on very small screens */
-@media (max-width: 320px) {
+/* Very small screens */
+@media (max-width: 360px) {
   .auth-page-background {
-    padding: 5px;
+    padding: 10px;
   }
-  
-  .auth-page-background .auth-container {
-    border-radius: 10px;
+
+  .auth-page-background .form-section {
+    padding: 25px;
   }
-  
-  .auth-page-background .auth-container .welcome-section,
-  .auth-page-background .auth-container .form-section {
-    padding: 20px;
+
+  /* Form container remains exactly the same */
+  .auth-page-background .form-container {
+    max-width: 320px;
   }
 }

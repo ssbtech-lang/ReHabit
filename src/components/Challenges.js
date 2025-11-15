@@ -1,64 +1,38 @@
 import React, { useState, useEffect } from "react";
 import "./Challenges.css";
 import GroupProofs from "./GroupProofs";
-import AI_suggestions from "./AI_suggestion"; // Import the AI_suggestions component
+import AI_suggestions from "./AI_suggestion";
 import StreakBattles from "./StreakBattles";
+
 export default function Challenges() {
   const [activeTab, setActiveTab] = useState("battles");
-  const [streakBattles, setStreakBattles] = useState([]);
-  const [aiSuggestions, setAiSuggestions] = useState([]);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    // Mock data for other tabs
-    setStreakBattles([
-      {
-        id: 1,
-        opponent: { name: "Alex", avatar: "👨‍💻" },
-        habit: "Morning Run",
-        myStreak: 7,
-        opponentStreak: 5,
-        endDate: "2024-01-20",
-        status: "active"
-      },
-      {
-        id: 2,
-        opponent: { name: "Sam", avatar: "👩‍🎨" },
-        habit: "Meditation",
-        myStreak: 3,
-        opponentStreak: 3,
-        endDate: "2024-01-25",
-        status: "active"
-      }
-    ]);
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
 
-    setAiSuggestions([
-      {
-        id: 1,
-        goal: "Lose Weight",
-        habits: ["Morning Walk", "Drink Water", "Healthy Lunch"],
-        difficulty: "Beginner",
-        duration: "4 weeks"
-      },
-      {
-        id: 2,
-        goal: "Reduce Stress",
-        habits: ["Meditation", "Digital Detox", "Gratitude Journal"],
-        difficulty: "Easy",
-        duration: "3 weeks"
-      }
-    ]);
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
-  const startNewBattle = () => {
-    console.log("Start new streak battle");
+  const tabLabels = {
+    battles: "⚔️ Streak Battles",
+    groups: "👥 Group Proofs", 
+    ai: "🤖 AI Suggestions"
   };
 
-  const applyAiSuggestion = (suggestionId) => {
-    console.log("Apply AI suggestion:", suggestionId);
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setShowDropdown(false);
   };
 
-  const sendNudge = (battleId) => {
-    alert(`Nudge sent! Your friend will be encouraged to keep their streak! 🔥`);
+  const toggleDropdown = () => {
+    setShowDropdown(!showDropdown);
   };
 
   return (
@@ -68,37 +42,69 @@ export default function Challenges() {
         <p>Compete, collaborate, and grow with friends</p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="challenges-tabs">
-        <button 
-          className={`tab ${activeTab === "battles" ? "active" : ""}`}
-          onClick={() => setActiveTab("battles")}
-        >
-          ⚔️ Streak Battles
-        </button>
-        <button 
-          className={`tab ${activeTab === "groups" ? "active" : ""}`}
-          onClick={() => setActiveTab("groups")}
-        >
-          👥 Group Proofs
-        </button>
-        <button 
-          className={`tab ${activeTab === "ai" ? "active" : ""}`}
-          onClick={() => setActiveTab("ai")}
-        >
-          🤖 AI Suggestions
-        </button>
-      </div>
+      {/* Tab Navigation - Toggle for mobile, tabs for desktop */}
+      {isMobile ? (
+        <div className="challenges-dropdown">
+          <button 
+            className="dropdown-toggle"
+            onClick={toggleDropdown}
+          >
+            {tabLabels[activeTab]} ▼
+          </button>
+          {showDropdown && (
+            <div className="dropdown-menu">
+              <button 
+                className={`dropdown-item ${activeTab === "battles" ? "active" : ""}`}
+                onClick={() => handleTabChange("battles")}
+              >
+                ⚔️ Streak Battles
+              </button>
+              <button 
+                className={`dropdown-item ${activeTab === "groups" ? "active" : ""}`}
+                onClick={() => handleTabChange("groups")}
+              >
+                👥 Group Proofs
+              </button>
+              <button 
+                className={`dropdown-item ${activeTab === "ai" ? "active" : ""}`}
+                onClick={() => handleTabChange("ai")}
+              >
+                🤖 AI Suggestions
+              </button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="challenges-tabs">
+          <button 
+            className={`tab ${activeTab === "battles" ? "active" : ""}`}
+            onClick={() => setActiveTab("battles")}
+          >
+            ⚔️ Streak Battles
+          </button>
+          <button 
+            className={`tab ${activeTab === "groups" ? "active" : ""}`}
+            onClick={() => setActiveTab("groups")}
+          >
+            👥 Group Proofs
+          </button>
+          <button 
+            className={`tab ${activeTab === "ai" ? "active" : ""}`}
+            onClick={() => setActiveTab("ai")}
+          >
+            🤖 AI Suggestions
+          </button>
+        </div>
+      )}
 
       {/* Content Area */}
       <div className="challenges-content">
-        
         {/* Streak Battles Tab */}
-       {activeTab === "battles" && (
-  <div className="tab-content">
-    <StreakBattles />
-  </div>
-)}
+        {activeTab === "battles" && (
+          <div className="tab-content">
+            <StreakBattles />
+          </div>
+        )}
 
         {/* Group Proofs Tab */}
         {activeTab === "groups" && (
@@ -110,7 +116,7 @@ export default function Challenges() {
         {/* AI Suggestions Tab */}
         {activeTab === "ai" && (
           <div className="tab-content">
-            <AI_suggestions /> {/* Replace the existing content with the AI_suggestions component */}
+            <AI_suggestions />
           </div>
         )}
       </div>

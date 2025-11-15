@@ -22,7 +22,7 @@ function Calendar() {
   };
 
   const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'https://rehabit-0wfi.onrender.com/api',
     headers: {
       'Authorization': `Bearer ${getAuthToken()}`
     }

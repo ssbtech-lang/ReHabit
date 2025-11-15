@@ -4,7 +4,7 @@ import "./StreakBattles.css";
 
 // Axios instance with dynamic token
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: 'https://rehabit-0wfi.onrender.com/api',
 });
 
 // Add request interceptor to always use fresh token

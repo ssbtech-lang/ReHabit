@@ -15,7 +15,7 @@ export default function ProfilePanel({ user, onClose, onUserUpdate }) {
   const fetchUserStats = async () => {
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/user/stats", {
+      const response = await fetch("https://rehabit-0wfi.onrender.com/api/user/stats", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -37,7 +37,7 @@ export default function ProfilePanel({ user, onClose, onUserUpdate }) {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("http://localhost:5000/api/user/profile", {
+      const response = await fetch("https://rehabit-0wfi.onrender.com/api/user/profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
