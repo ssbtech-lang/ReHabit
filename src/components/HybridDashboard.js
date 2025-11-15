@@ -1,10 +1,13 @@
+// components/HybridDashboard.js (Updated)
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import HeaderHybrid from "./HeaderHybrid";
 import BottomNavHybrid from "./BottomNavHybrid";
 import AddHabit from "./AddHabit";
 import "./hybrid.css";
 import ProfilePanel from "./ProfilePanel";
+
 function uid(prefix = "id") {
   return prefix + Math.random().toString(36).slice(2, 9);
 }
@@ -16,7 +19,18 @@ function todayKey(date = new Date()) {
 // Helper function to check if habit exists on a given date
 function habitExistsOnDate(habit, selectedDate) {
   const habitStartDate = habit.startDate || habit.createdAt;
-  return new Date(selectedDate) >= new Date(habitStartDate);
+
+  // If selectedDate is before start date → hide
+  if (new Date(selectedDate) < new Date(habitStartDate)) {
+    return false;
+  }
+
+  // ⭐ NEW: If habit has an end date and selectedDate is after end date → hide
+  if (habit.endDate && new Date(selectedDate) > new Date(habit.endDate)) {
+    return false;
+  }
+
+  return true;
 }
 
 export default function HybridDashboard() {
@@ -28,6 +42,13 @@ export default function HybridDashboard() {
   const [user, setUser] = useState(null);
   const isTodaySelected = selectedDate === todayKey();
   const [showProfile, setShowProfile] = useState(false);
+  
+  // AI Suggestion States
+  const [aiHabitsToAdd, setAiHabitsToAdd] = useState([]);
+  const [currentHabitIndex, setCurrentHabitIndex] = useState(0);
+  const location = useLocation();
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Get user info from localStorage
     const userData = localStorage.getItem('user');
@@ -35,6 +56,28 @@ export default function HybridDashboard() {
       setUser(JSON.parse(userData));
     }
   }, []);
+
+  // Handle AI suggestions from Challenges page - FIXED
+  useEffect(() => {
+    // Check if we're coming from Challenges with AI habits
+    if (location.state?.showAddHabit && location.state?.aiHabits) {
+      setAiHabitsToAdd(location.state.aiHabits);
+      setShowModal(true);
+      setCurrentHabitIndex(0);
+      
+      // ⭐ FIX: Clear the navigation state to prevent reopening on refresh
+      window.history.replaceState({}, document.title);
+    }
+    
+    // Also check localStorage for AI habits
+    const storedHabits = localStorage.getItem('aiSuggestedHabits');
+    if (storedHabits && !location.state?.aiHabits) {
+      setAiHabitsToAdd(JSON.parse(storedHabits));
+      setShowModal(true);
+      setCurrentHabitIndex(0);
+      localStorage.removeItem('aiSuggestedHabits');
+    }
+  }, [location]);
 
   // Get auth token
   const getAuthToken = () => {
@@ -77,28 +120,77 @@ export default function HybridDashboard() {
     }
   }, [showModal]);
 
-  const addHabit = (newHabit) => {
-    // Add startDate to new habit
-    const habitWithDate = {
-      ...newHabit,
-      startDate: newHabit.startDate || todayKey()
-    };
-    
-    api.post('/habits', habitWithDate)
-      .then(response => {
-        setHabits(prev => [...prev, response.data]);
-        setShowModal(false);
-      })
-      .catch(error => {
-        alert("Error adding habit!");
-        console.error(error);
-        if (error.response?.status === 401) {
-          localStorage.removeItem('token');
-          localStorage.removeItem('user');
-          window.location.href = '/login';
-        }
-      });
+// In your HybridDashboard.js, update the addHabit function and AI handling:
+
+const addHabit = (newHabit) => {
+  // Add startDate to new habit
+  const habitWithDate = {
+    ...newHabit,
+    startDate: newHabit.startDate || todayKey()
   };
+  
+  api.post('/habits', habitWithDate)
+    .then(response => {
+      setHabits(prev => [...prev, response.data]);
+      
+      if (aiHabitsToAdd.length > 0) {
+        if (currentHabitIndex < aiHabitsToAdd.length - 1) {
+          // Move to next habit automatically after a short delay
+          setTimeout(() => {
+            setCurrentHabitIndex(prev => prev + 1);
+            console.log('Moving to next habit:', currentHabitIndex + 1); // Debug
+          }, 800); // Small delay to show success message
+        } else {
+          // All AI habits added
+          setTimeout(() => {
+            setShowModal(false);
+            setAiHabitsToAdd([]);
+            setCurrentHabitIndex(0);
+            console.log('All AI habits added'); // Debug
+          }, 800);
+        }
+      } else {
+        setShowModal(false);
+      }
+    })
+    .catch(error => {
+      alert("Error adding habit!");
+      console.error(error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      }
+    });
+};
+
+// ⭐ NEW: Function to handle closing modal during AI habit addition
+const handleCloseModal = () => {
+  if (aiHabitsToAdd.length > 0 && currentHabitIndex < aiHabitsToAdd.length - 1) {
+    // If there are still habits to add, ask for confirmation
+    const confirmClose = window.confirm(
+      `You have ${aiHabitsToAdd.length - currentHabitIndex} more habits to add. Are you sure you want to cancel?`
+    );
+    if (!confirmClose) return;
+  }
+  
+  setShowModal(false);
+  setEditing(null);
+  setAiHabitsToAdd([]);
+  setCurrentHabitIndex(0);
+};
+
+const handleSkipHabit = () => {
+  if (aiHabitsToAdd.length > 0 && currentHabitIndex < aiHabitsToAdd.length - 1) {
+    // Move to next habit
+    setCurrentHabitIndex(prev => prev + 1);
+  } else {
+    // No more habits to add
+    setShowModal(false);
+    setAiHabitsToAdd([]);
+    setCurrentHabitIndex(0);
+  }
+};
 
   const updateHabit = (id, updates) => {
     api.put(`/habits/${id}`, updates)
@@ -133,6 +225,14 @@ export default function HybridDashboard() {
         }
       });
   };
+
+  useEffect(() => {
+  // This will ensure the form updates when we move to the next habit
+  if (showModal && aiHabitsToAdd.length > 0) {
+    // Force re-render of AddHabit with new data
+    // The edit prop will automatically get the latest data from getCurrentHabitData()
+  }
+}, [currentHabitIndex, showModal, aiHabitsToAdd]);
 
   const markHabit = (habitId, date, status) => {
     const habit = habits.find(h => h._id === habitId);
@@ -185,6 +285,25 @@ export default function HybridDashboard() {
         }
       });
   };
+
+  // In HybridDashboard.js, update the getCurrentHabitData function:
+
+// Get current AI habit data for pre-filling the form
+const getCurrentHabitData = () => {
+  if (aiHabitsToAdd.length > 0 && currentHabitIndex < aiHabitsToAdd.length) {
+    const habit = aiHabitsToAdd[currentHabitIndex];
+    console.log('Loading AI habit:', currentHabitIndex, habit); // Debug log
+    return {
+      habitName: habit.name,
+      description: habit.description,
+      frequency: habit.frequency.includes('daily') ? 'daily' : 
+                habit.frequency.includes('weekly') ? 'weekly' : 'monthly',
+      category: habit.category,
+      startDate: new Date().toISOString().split('T')[0]
+    };
+  }
+  return null;
+};
 
   function HabitCardHybrid({ habit, date, onMark, onAddNote, onEdit, onRemove }) {
     const [note, setNote] = useState(habit.notes?.[date] || "");
@@ -377,22 +496,40 @@ export default function HybridDashboard() {
             onClose={() => setShowProfile(false)}
           />
         )}
-        {showModal && (
-          <div className="modal-backdrop" tabIndex="-1">
-            <div className="modal-card">
-              <AddHabit
-                onAddHabit={(payload) => {
-                  if (editing) updateHabit(editing._id, payload);
-                  else addHabit(payload);
-                  setShowModal(false);
-                  setEditing(null);
-                }}
-                onClose={() => { setShowModal(false); setEditing(null); }}
-                edit={editing}
-              />
+        
+        {/* Progress indicator when adding multiple AI habits */}
+        {showModal && aiHabitsToAdd.length > 0 && (
+          <div className="ai-habit-progress">
+            <p>
+              Adding AI Suggestions ({currentHabitIndex + 1}/{aiHabitsToAdd.length})
+            </p>
+            <div className="progress-bar">
+              <div 
+                className="progress-fill"
+                style={{ width: `${((currentHabitIndex + 1) / aiHabitsToAdd.length) * 100}%` }}
+              ></div>
             </div>
           </div>
         )}
+
+
+{showModal && (
+  <div className="modal-backdrop" tabIndex="-1">
+    <div className="modal-card">
+      <AddHabit
+        onAddHabit={(payload) => {
+          if (editing) updateHabit(editing._id, payload);
+          else addHabit(payload);
+        }}
+        onClose={handleCloseModal} // ⭐ Use the new close handler
+        edit={editing || getCurrentHabitData()}
+        isAISuggestion={aiHabitsToAdd.length > 0} // ⭐ NEW: Pass this prop
+        currentAIIndex={currentHabitIndex} // ⭐ NEW: Pass current index
+        totalAISuggestions={aiHabitsToAdd.length} // ⭐ NEW: Pass total count
+      />
+    </div>
+  </div>
+)}
       </div>
     </div>
   );

@@ -713,3 +713,55 @@
     max-height: 95vh;
   }
 }
+
+/* Add these to your existing hybrid.css file */
+
+/* AI Habit Progress Indicator */
+.ai-habit-progress {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  padding: 15px 25px;
+  border-radius: 25px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  text-align: center;
+  min-width: 250px;
+  border: 2px solid var(--marsala);
+}
+
+.ai-habit-progress p {
+  margin: 0 0 8px 0;
+  font-weight: 600;
+  color: var(--black);
+  font-size: 14px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e1e5e9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, var(--marsala), var(--red));
+  transition: width 0.3s ease;
+}
+
+/* Add these media queries for responsive design */
+@media (max-width: 480px) {
+  .ai-habit-progress {
+    top: 10px;
+    padding: 12px 20px;
+    min-width: 200px;
+  }
+  
+  .ai-habit-progress p {
+    font-size: 13px;
+  }
+}

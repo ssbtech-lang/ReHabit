@@ -1,214 +1,73 @@
-// import React, { useState } from "react";
-// import "./AddHabit.css";
-
-// function AddHabit({ onAddHabit, onClose }) {
-//   const [habitName, setHabitName] = useState("");
-//   const [description, setDescription] = useState("");
-//   const [startDate, setStartDate] = useState("");
-//   const [endDate, setEndDate] = useState("");
-//   const [frequency, setFrequency] = useState("daily");
-//   const [error, setError] = useState("");
-//   const [successMessage, setSuccessMessage] = useState("");
-//   const [category, setCategory] = useState("General");
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     setError("");
-//     setSuccessMessage("");
-
-//     if (!habitName.trim()) {
-//       setError("Habit Name is required");
-//       return;
-//     }
-//     if (startDate && isNaN(Date.parse(startDate))) {
-//       setError("Start Date is invalid");
-//       return;
-//     }
-
-//     const newHabit = {
-//       habitName,
-//       description,
-//       startDate,
-//       endDate,
-//       frequency,
-//       category,
-//     };
-
-//     setTimeout(() => {
-//       onAddHabit(newHabit);
-//       setSuccessMessage("Habit added successfully!");
-//       setHabitName("");
-//       setDescription("");
-//       setStartDate("");
-//       setEndDate("");
-//       setFrequency("daily");
-//       setCategory("General");
-//     }, 500);
-//   };
-
-//   return (
-//     <div className="addHabitForm">
-//       <button 
-//         className="closeButton" 
-//         onClick={onClose} 
-//         title="Close"
-//         type="button"
-//         aria-label="Close dialog"
-//       >
-//         &times;
-//       </button>
-//       <h2 className="title">Add New Habit</h2>
-//       <form onSubmit={handleSubmit} className="form" noValidate>
-//         {error && (
-//           <p className="error" role="alert" aria-live="polite">
-//             {error}
-//           </p>
-//         )}
-//         {successMessage && (
-//           <p className="success" role="status" aria-live="polite">
-//             {successMessage}
-//           </p>
-//         )}
-
-//         <div className="formGroup">
-//           <label htmlFor="habitName" className="label">
-//             Habit Name*
-//           </label>
-//           <input
-//             id="habitName"
-//             type="text"
-//             value={habitName}
-//             onChange={(e) => setHabitName(e.target.value)}
-//             placeholder="Enter habit name"
-//             className="input"
-//             required
-//             aria-required="true"
-//             aria-invalid={error && error.includes("Habit Name")}
-//           />
-//         </div>
-
-//         <div className="formGroup">
-//           <label htmlFor="description" className="label">
-//             Description
-//           </label>
-//           <textarea
-//             id="description"
-//             value={description}
-//             onChange={(e) => setDescription(e.target.value)}
-//             placeholder="Short description"
-//             className="textarea"
-//             rows="3"
-//           />
-//         </div>
-
-//         <div className="formGroup">
-//           <label htmlFor="startDate" className="label">
-//             Start Date
-//           </label>
-//           <input
-//             id="startDate"
-//             type="date"
-//             value={startDate}
-//             onChange={(e) => setStartDate(e.target.value)}
-//             className="input"
-//             aria-invalid={error && error.includes("Start Date")}
-//           />
-//         </div>
-
-//          <div className="formGroup">
-//           <label htmlFor="endDate" className="label">
-//             End Date
-//           </label>
-//           <input
-//             id="endDate"
-//             type="date"
-//             value={endDate}
-//             onChange={(e) => setEndDate(e.target.value)}
-//             className="input"
-//             aria-invalid={error && error.includes("End Date")}
-//           />
-//         </div>
-
-//         <div className="formGroup">
-//           <label htmlFor="frequency" className="label">
-//             Frequency
-//           </label>
-//           <select
-//             id="frequency"
-//             value={frequency}
-//             onChange={(e) => setFrequency(e.target.value)}
-//             className="input"
-//           >
-//             <option value="daily">Daily</option>
-//             <option value="weekly">Weekly</option>
-//             <option value="monthly">Monthly</option>
-//           </select>
-//         </div>
-
-//         <div className="formGroup">
-//           <label htmlFor="category" className="label">
-//             Category
-//           </label>
-//           <select
-//             id="category"
-//             value={category}
-//             onChange={(e) => setCategory(e.target.value)}
-//             className="input"
-//           >
-//             <option value="general">General</option>
-//             <option value="health">Health</option>
-//             <option value="study">Study</option>
-//             <option value="work">Work</option>
-//             <option value="personal">Personal</option>
-//           </select>
-//         </div>
-
-//         <button type="submit" className="button">
-//           Add Habit
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
-
-// export default AddHabit;
-
-
-import React, { useState } from "react";
+// components/AddHabit.js (Fully Updated)
+import React, { useState, useEffect } from "react";
 import "./AddHabit.css";
 
-function AddHabit({ onAddHabit, onClose, edit }) {
-  const [habitName, setHabitName] = useState(edit?.habitName || "");
-  const [description, setDescription] = useState(edit?.description || "");
-  const [startDate, setStartDate] = useState(edit?.startDate || "");
-  const [endDate, setEndDate] = useState(edit?.endDate || "");
-  const [frequency, setFrequency] = useState(edit?.frequency || "daily");
+function AddHabit({ onAddHabit, onClose, edit, isAISuggestion, currentAIIndex, totalAISuggestions }) {
+  const [habitName, setHabitName] = useState("");
+  const [description, setDescription] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [frequency, setFrequency] = useState("daily");
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
-  const [category, setCategory] = useState(edit?.category || "General");
+  const [category, setCategory] = useState("General");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // ⭐ Add today's date (YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0];
+
+  // ⭐ CRITICAL FIX: Reset form when edit prop changes (for AI habits)
+  useEffect(() => {
+    if (edit) {
+      setHabitName(edit.habitName || "");
+      setDescription(edit.description || "");
+      setStartDate(edit.startDate || today);
+      setEndDate(edit.endDate || "");
+      setFrequency(edit.frequency || "daily");
+      setCategory(edit.category || "General");
+    } else {
+      // Reset form for new habit
+      setHabitName("");
+      setDescription("");
+      setStartDate(today);
+      setEndDate("");
+      setFrequency("daily");
+      setCategory("General");
+    }
+    setError("");
+    setSuccessMessage("");
+    setIsSubmitting(false);
+  }, [edit, today]); // ⭐ This dependency ensures form updates when edit prop changes
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    if (isSubmitting) return; // Prevent double submission
+    
     setError("");
     setSuccessMessage("");
+    setIsSubmitting(true);
 
     if (!habitName.trim()) {
       setError("Habit Name is required");
+      setIsSubmitting(false);
       return;
     }
     if (startDate && isNaN(Date.parse(startDate))) {
       setError("Start Date is invalid");
+      setIsSubmitting(false);
       return;
     }
     if (endDate && startDate && new Date(endDate) < new Date(startDate)) {
       setError("End Date cannot be before Start Date");
+      setIsSubmitting(false);
       return;
     }
 
     const newHabit = {
       habitName,
       description,
-      startDate,
+      startDate: startDate || today,
       endDate,
       frequency,
       category,
@@ -216,17 +75,27 @@ function AddHabit({ onAddHabit, onClose, edit }) {
 
     setTimeout(() => {
       onAddHabit(newHabit);
-      setSuccessMessage(edit ? "Habit updated successfully!" : "Habit added successfully!");
+      setSuccessMessage("Habit added successfully!");
       
-      if (!edit) {
-        setHabitName("");
-        setDescription("");
-        setStartDate("");
-        setEndDate("");
-        setFrequency("daily");
-        setCategory("General");
+      // ⭐ Don't reset form for AI suggestions - let parent component handle the flow
+      if (!isAISuggestion) {
+        setTimeout(() => {
+          setHabitName("");
+          setDescription("");
+          setStartDate(today);
+          setEndDate("");
+          setFrequency("daily");
+          setCategory("General");
+          setIsSubmitting(false);
+        }, 1000);
+      } else {
+        setIsSubmitting(false);
       }
     }, 500);
+  };
+
+  const handleSkip = () => {
+    onAddHabit({ skip: true });
   };
 
   const habitTips = [
@@ -252,7 +121,32 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                   <rect x="47" y="14" width="5" height="10" rx="2.5" fill="#da746f"/>
                 </svg>
               </div>
-              <h2 className="title">{edit ? "Edit Habit" : "Add New Habit"}</h2>
+              
+              {/* ⭐ AI Progress Indicator */}
+              {isAISuggestion && totalAISuggestions > 1 && (
+                <div className="ai-progress-indicator">
+                  <div className="ai-progress-text">
+                    Adding AI Habits ({currentAIIndex + 1}/{totalAISuggestions})
+                  </div>
+                  <div className="ai-progress-bar">
+                    <div 
+                      className="ai-progress-fill"
+                      style={{ width: `${((currentAIIndex + 1) / totalAISuggestions) * 100}%` }}
+                    ></div>
+                  </div>
+                </div>
+              )}
+              
+              <h2 className="title">
+                {edit ? "Edit Habit" : 
+                 isAISuggestion ? "Add AI Suggested Habit" : "Add New Habit"}
+              </h2>
+              
+              {isAISuggestion && (
+                <p className="ai-habit-description">
+                  {edit?.description || "AI-suggested habit based on your goals"}
+                </p>
+              )}
             </div>
 
             <div className="mainContent">
@@ -273,7 +167,12 @@ function AddHabit({ onAddHabit, onClose, edit }) {
 
               <div className="motivationQuote">
                 <div className="quoteIcon">✨</div>
-                <p className="quoteText">"Small daily improvements lead to stunning results"</p>
+                <p className="quoteText">
+                  {isAISuggestion 
+                    ? "This habit was suggested by AI to help you reach your goals!" 
+                    : '"Small daily improvements lead to stunning results"'
+                  }
+                </p>
               </div>
             </div>
           </div>
@@ -289,7 +188,14 @@ function AddHabit({ onAddHabit, onClose, edit }) {
               <p className="error" role="alert" aria-live="polite">{error}</p>
             )}
             {successMessage && (
-              <p className="success" role="status" aria-live="polite">{successMessage}</p>
+              <p className="success" role="status" aria-live="polite">
+                {successMessage}
+                {isAISuggestion && currentAIIndex < totalAISuggestions - 1 && (
+                  <span className="next-habit-notice">
+                    <br />Preparing next habit...
+                  </span>
+                )}
+              </p>
             )}
 
             <div className="formSection">
@@ -305,8 +211,7 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                   placeholder="Enter habit name"
                   className="input"
                   required
-                  aria-required="true"
-                  aria-invalid={error && error.includes("Habit Name")}
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -316,8 +221,9 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Short description about your habit"
+                  placeholder="Short description about this habit"
                   className="textarea"
+                  disabled={isSubmitting}
                   rows="3"
                 />
               </div>
@@ -333,18 +239,21 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                     className="input"
-                    aria-invalid={error && error.includes("Start Date")}
+                    min={today}
+                    disabled={isSubmitting}
                   />
                 </div>
+
                 <div className="formGroup dateGroup">
-                  <label htmlFor="endDate" className="label">End Date</label>
+                  <label htmlFor="endDate" className="label">End Date (Optional)</label>
                   <input
                     id="endDate"
                     type="date"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                     className="input"
-                    aria-invalid={error && error.includes("End Date")}
+                    min={startDate || today}
+                    disabled={isSubmitting}
                   />
                 </div>
               </div>
@@ -358,6 +267,7 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                   value={frequency}
                   onChange={(e) => setFrequency(e.target.value)}
                   className="input"
+                  disabled={isSubmitting}
                 >
                   <option value="daily">Daily</option>
                   <option value="weekly">Weekly</option>
@@ -372,19 +282,47 @@ function AddHabit({ onAddHabit, onClose, edit }) {
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="input"
+                  disabled={isSubmitting}
                 >
                   <option value="General">General</option>
                   <option value="Health">Health</option>
                   <option value="Study">Study</option>
                   <option value="Work">Work</option>
                   <option value="Personal">Personal</option>
+                  <option value="Music">Music</option>
+                  <option value="Fitness">Fitness</option>
+                  <option value="Mental">Mental Health</option>
                 </select>
               </div>
             </div>
 
-            <button type="submit" className="button primaryButton">
-              {edit ? "Update Habit" : "Add Habit"}
-            </button>
+            
+
+<div className="formActions">
+  <button 
+    type="submit" 
+    className="button primaryButton"
+    disabled={isSubmitting}
+  >
+    {isSubmitting ? "Adding..." : 
+     edit ? "Update Habit" : 
+     isAISuggestion && currentAIIndex < totalAISuggestions - 1 
+       ? `Add Habit (${currentAIIndex + 1}/${totalAISuggestions})` 
+       : "Add Habit"}
+  </button>
+  
+  {/* ⭐ FIXED: Skip button shows for ALL AI habits except the last one */}
+  {isAISuggestion && currentAIIndex < totalAISuggestions - 1 && (
+    <button 
+      type="button" 
+      className="button skipButton"
+      onClick={handleSkip}
+      disabled={isSubmitting}
+    >
+      Skip This Habit
+    </button>
+  )}
+</div>
           </form>
         </div>
       </div>

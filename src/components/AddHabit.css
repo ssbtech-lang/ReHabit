@@ -1,4 +1,3 @@
-/* AddHabit Component Specific Styles */
 .add-habit-modal .addHabitFormHybrid {
   display: flex;
   width: 100%;
@@ -515,4 +514,137 @@ body.modal-open {
   .hybrid-dashboard .modal-backdrop {
     padding: 10px;
   }
+}
+
+/* AI Progress Indicator */
+.add-habit-modal .ai-progress-indicator {
+  margin-bottom: 15px;
+  padding: 10px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 10px;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.add-habit-modal .ai-progress-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #667eea;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.add-habit-modal .ai-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e1e5e9;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.add-habit-modal .ai-progress-fill {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  transition: width 0.3s ease;
+  border-radius: 3px;
+}
+
+/* Next habit notice */
+.add-habit-modal .next-habit-notice {
+  font-size: 12px;
+  opacity: 0.8;
+  font-style: italic;
+}
+
+/* Secondary button for skip */
+.add-habit-modal .secondaryButton {
+  background: #6c757d !important;
+  margin-top: 10px;
+}
+
+.add-habit-modal .secondaryButton:hover {
+  background: #5a6268 !important;
+}
+
+/* Success message enhancements */
+.add-habit-modal .success {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  color: #155724;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+/* Skip Button Styling - Match your theme colors */
+.add-habit-modal .skipButton {
+  background: #da746f !important; /* Your marsala color */
+  color: white !important;
+  border: 2px solid #da746f !important;
+}
+
+.add-habit-modal .skipButton:hover:not(:disabled) {
+  background: #d6304c !important; /* Your red color */
+  border-color: #d6304c !important;
+  transform: translateY(-2px);
+}
+
+.add-habit-modal .skipButton:disabled {
+  background: #cccccc !important;
+  border-color: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Remove the old secondaryButton styles if they exist */
+.add-habit-modal .secondaryButton {
+  display: none;
+}
+
+/* Form Actions Layout */
+.add-habit-modal .formActions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* Primary Button - Your theme colors */
+.add-habit-modal .primaryButton {
+  background: linear-gradient(135deg, #da746f, #d6304c) !important;
+  border: none !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.add-habit-modal .primaryButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #d6304c, #da746f) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(214, 48, 76, 0.3) !important;
+}
+
+.add-habit-modal .primaryButton:disabled {
+  background: #cccccc !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none !important;
+}
+
+/* Base button styles */
+.add-habit-modal .button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  text-align: center;
+  width: 100%;
+}
+
+.add-habit-modal .button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }

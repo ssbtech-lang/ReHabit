@@ -1,3 +1,4 @@
+// components/BottomNavHybrid.js
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -39,7 +40,7 @@ export default function BottomNavHybrid({ onProfileClick }) {
         <span className="label">Streak</span>
       </div>
 
-      {/* Challenges */}
+      {/* Challenges - NEW */}
       <div
         className={`nav-item ${isActive("/challenges") ? "active" : ""}`}
         onClick={() => navigate("/challenges")}

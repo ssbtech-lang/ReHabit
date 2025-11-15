@@ -1,0 +1,525 @@
+/* Challenges.css - Scoped to Challenges component only */
+.challenges-container {
+  --red: #d6304c;
+  --marsala: #da746f;
+  --black: #1a1a1d;
+  --white: #fffafe;
+  --bg: #fff6f5;
+  --border: rgba(26, 26, 29, 0.1);
+  --text-light: rgba(26, 26, 29, 0.6);
+  --radius: 18px;
+  --shadow: 0 8px 28px rgba(26, 26, 29, 0.10);
+  --card-shadow: 0 8px 28px rgba(26, 26, 29, 0.10);
+  --gradient-primary: linear-gradient(135deg, var(--marsala), var(--red));
+}
+
+.challenges-container {
+  background: var(--bg);
+  min-height: 100vh;
+  color: var(--black);
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Header - Scoped to challenges container */
+.challenges-container .challenges-header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding: 20px 0;
+}
+
+.challenges-container .challenges-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: var(--black);
+  background: linear-gradient(135deg, var(--black), var(--red));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.challenges-container .challenges-header p {
+  color: var(--text-light);
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Enhanced Tab Navigation - Scoped */
+.challenges-container .challenges-tabs {
+  display: flex;
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 6px;
+  margin-bottom: 32px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.challenges-container .tab {
+  flex: 1;
+  padding: 14px 16px;
+  border: none;
+  background: transparent;
+  border-radius: calc(var(--radius) - 4px);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-light);
+  border: 2px solid transparent;
+}
+
+.challenges-container .tab.active {
+  background: var(--white);
+  color: var(--red);
+  box-shadow: 0 4px 16px rgba(214, 48, 76, 0.15);
+  border-color: var(--red);
+  transform: translateY(-1px);
+}
+
+.challenges-container .tab:hover:not(.active) {
+  color: var(--black);
+  background: rgba(214, 48, 76, 0.05);
+}
+
+/* Content Area - Scoped */
+.challenges-container .challenges-content {
+  animation: challengesFadeInUp 0.4s ease;
+}
+
+@keyframes challengesFadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.challenges-container .tab-content {
+  animation: challengesSlideIn 0.3s ease;
+}
+
+@keyframes challengesSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Section Headers - Scoped */
+.challenges-container .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--border);
+}
+
+.challenges-container .section-header h2 {
+  color: var(--black);
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* Enhanced Buttons - Scoped */
+.challenges-container .btn-primary {
+  background: var(--gradient-primary);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(214, 48, 76, 0.3);
+}
+
+.challenges-container .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(214, 48, 76, 0.4);
+}
+
+.challenges-container .btn-secondary {
+  background: transparent;
+  color: var(--red);
+  border: 2px solid var(--red);
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.challenges-container .btn-secondary:hover {
+  background: var(--red);
+  color: var(--white);
+  transform: translateY(-1px);
+}
+
+.challenges-container .full-width {
+  width: 100%;
+}
+
+/* Enhanced Battle Cards - Scoped */
+.challenges-container .battles-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.challenges-container .battle-card {
+  background: var(--white);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.challenges-container .battle-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-primary);
+}
+
+.challenges-container .battle-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 36px rgba(26, 26, 29, 0.15);
+}
+
+.challenges-container .battle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.challenges-container .opponent-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.challenges-container .avatar {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border-radius: 50%;
+  border: 2px solid var(--border);
+}
+
+.challenges-container .name {
+  font-weight: 600;
+  color: var(--black);
+}
+
+.challenges-container .status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.challenges-container .status.active {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.challenges-container .battle-habit {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 12px;
+  border-left: 4px solid var(--red);
+}
+
+/* Enhanced Streak Comparison - Scoped */
+.challenges-container .streak-comparison {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: 12px;
+  position: relative;
+}
+
+.challenges-container .streak-comparison::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 60%;
+  background: var(--border);
+}
+
+.challenges-container .streak-item {
+  text-align: center;
+  flex: 1;
+}
+
+.challenges-container .streak-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--red);
+  line-height: 1;
+}
+
+.challenges-container .streak-label {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.challenges-container .vs {
+  font-size: 20px;
+  margin: 0 16px;
+  background: var(--white);
+  padding: 8px;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.challenges-container .battle-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Enhanced AI Suggestions - Scoped */
+.challenges-container .ai-suggestions-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+}
+
+.challenges-container .suggestion-card {
+  background: var(--white);
+  padding: 24px;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.challenges-container .suggestion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 60px;
+  background: var(--gradient-primary);
+  border-radius: 0 0 0 60px;
+  opacity: 0.1;
+}
+
+.challenges-container .suggestion-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px rgba(26, 26, 29, 0.15);
+}
+
+.challenges-container .suggestion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.challenges-container .suggestion-header h3 {
+  margin: 0;
+  color: var(--black);
+  font-size: 20px;
+  font-weight: 700;
+  flex: 1;
+}
+
+.challenges-container .difficulty-badge {
+  background: var(--gradient-primary);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(214, 48, 76, 0.3);
+}
+
+.challenges-container .suggested-habits {
+  margin-bottom: 20px;
+}
+
+.challenges-container .suggested-habits h4 {
+  margin: 0 0 12px 0;
+  color: var(--black);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.challenges-container .suggested-habits ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--black);
+}
+
+.challenges-container .suggested-habits li {
+  margin-bottom: 6px;
+  padding: 4px 0;
+  font-weight: 500;
+}
+
+.challenges-container .suggestion-meta {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.challenges-container .duration {
+  color: var(--text-light);
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--bg);
+  padding: 8px 16px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+/* Enhanced Empty States - Scoped */
+.challenges-container .empty-state {
+  text-align: center;
+  padding: 60px 40px;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
+  border: 2px dashed var(--border);
+}
+
+.challenges-container .empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.challenges-container .empty-state h3 {
+  color: var(--black);
+  margin-bottom: 12px;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.challenges-container .empty-state p {
+  color: var(--text-light);
+  margin-bottom: 24px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Responsive Design - Scoped */
+@media (max-width: 768px) {
+  .challenges-container {
+    padding: 16px;
+  }
+  
+  .challenges-container .challenges-header h1 {
+    font-size: 28px;
+  }
+  
+  .challenges-container .challenges-tabs {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .challenges-container .tab {
+    text-align: center;
+  }
+  
+  .challenges-container .battles-grid,
+  .challenges-container .ai-suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .challenges-container .battle-actions {
+    flex-direction: column;
+  }
+  
+  .challenges-container .section-header {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+  }
+  
+  .challenges-container .section-header h2 {
+    text-align: center;
+  }
+  
+  .challenges-container .streak-comparison {
+    padding: 12px;
+  }
+  
+  .challenges-container .streak-value {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .challenges-container {
+    padding: 12px;
+  }
+  
+  .challenges-container .challenges-header {
+    margin-bottom: 24px;
+  }
+  
+  .challenges-container .challenges-header h1 {
+    font-size: 24px;
+  }
+  
+  .challenges-container .battle-card,
+  .challenges-container .suggestion-card {
+    padding: 20px;
+  }
+  
+  .challenges-container .empty-state {
+    padding: 40px 20px;
+  }
+  
+  .challenges-container .empty-icon {
+    font-size: 48px;
+  }
+}

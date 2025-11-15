@@ -1,0 +1,532 @@
+/* components/Challenges.css */
+.challenges-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  background: var(--bg, #fff6f5);
+}
+
+.challenges-header {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--black, #1a1a1d);
+}
+
+.challenges-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: var(--red, #d6304c);
+}
+
+.challenges-header p {
+  font-size: 1.1rem;
+  opacity: 0.8;
+  color: var(--black, #1a1a1d);
+}
+
+.challenges-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  background: var(--white, #fffafe);
+  border-radius: 50px;
+  padding: 5px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: var(--card-shadow, 0 8px 28px rgba(26, 26, 29, 0.10));
+}
+
+.tab {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  background: transparent;
+  border-radius: 50px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  color: var(--black, #1a1a1d);
+}
+
+.tab.active {
+  background: linear-gradient(135deg, var(--marsala, #da746f), var(--red, #d6304c));
+  color: var(--white, #fffafe);
+  box-shadow: 0 4px 15px rgba(214, 48, 76, 0.3);
+}
+
+.ai-suggestions-container {
+  background: var(--white, #fffafe);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: var(--card-shadow, 0 10px 40px rgba(0, 0, 0, 0.1));
+}
+
+.goal-input-section {
+  margin-bottom: 30px;
+}
+
+.goal-input-section h2 {
+  color: var(--black, #1a1a1d);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.goal-input-container {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.goal-input {
+  flex: 1;
+  padding: 15px 20px;
+  border: 2px solid rgba(0, 0, 0, 0.09);
+  border-radius: 12px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: var(--white, #fffafe);
+  color: var(--black, #1a1a1d);
+}
+
+.goal-input:focus {
+  outline: none;
+  border-color: var(--marsala, #da746f);
+  box-shadow: 0 0 0 3px rgba(218, 116, 111, 0.1);
+}
+
+.suggest-button {
+  padding: 15px 25px;
+  background: linear-gradient(135deg, var(--marsala, #da746f), var(--red, #d6304c));
+  color: var(--white, #fffafe);
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.suggest-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(214, 48, 76, 0.3);
+}
+
+.suggest-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.quick-goals {
+  text-align: center;
+}
+
+.quick-goals p {
+  margin-bottom: 10px;
+  color: var(--black, #1a1a1d);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.quick-goals-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.quick-goal-btn {
+  padding: 10px 12px;
+  background: var(--white, #fffafe);
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 13px;
+  text-align: left;
+  white-space: normal;
+  line-height: 1.3;
+  color: var(--black, #1a1a1d);
+}
+
+.quick-goal-btn:hover {
+  background: var(--marsala, #da746f);
+  color: var(--white, #fffafe);
+  border-color: var(--marsala, #da746f);
+  transform: translateY(-1px);
+}
+
+.loading-suggestions {
+  text-align: center;
+  padding: 40px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid var(--red, #d6304c);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.suggestions-results {
+  margin-top: 30px;
+}
+
+.results-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.results-header h3 {
+  color: var(--black, #1a1a1d);
+  margin-bottom: 10px;
+}
+
+.results-header p {
+  color: var(--black, #1a1a1d);
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 15px;
+  background: rgba(218, 116, 111, 0.1);
+  border-radius: 12px;
+  margin-top: 15px;
+  border: 1px solid rgba(218, 116, 111, 0.2);
+}
+
+.implement-button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--marsala, #da746f), var(--red, #d6304c));
+  color: var(--white, #fffafe);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.implement-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(214, 48, 76, 0.3);
+}
+
+.suggestions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.habit-suggestion-card {
+  border: 2px solid rgba(0, 0, 0, 0.09);
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: var(--white, #fffafe);
+  position: relative;
+}
+
+.habit-suggestion-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--card-shadow, 0 10px 30px rgba(0, 0, 0, 0.1));
+  border-color: var(--marsala, #da746f);
+}
+
+.habit-suggestion-card.selected {
+  border-color: var(--red, #d6304c);
+  background: linear-gradient(135deg, rgba(255, 246, 245, 0.8), rgba(255, 250, 254, 0.9));
+}
+
+.habit-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.habit-card-header h4 {
+  flex: 1;
+  margin: 0;
+  color: var(--black, #1a1a1d);
+  font-size: 1.2rem;
+}
+
+.difficulty-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.difficulty-badge.beginner {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.difficulty-badge.intermediate {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.difficulty-badge.advanced {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+.habit-description {
+  color: var(--black, #1a1a1d);
+  margin-bottom: 15px;
+  line-height: 1.5;
+  opacity: 0.8;
+}
+
+.habit-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: var(--black, #1a1a1d);
+}
+
+.benefits-section {
+  margin-bottom: 15px;
+}
+
+.benefits-section strong {
+  color: var(--black, #1a1a1d);
+}
+
+.benefits-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0 0 0;
+}
+
+.benefits-section li {
+  padding: 5px 0;
+  color: var(--black, #1a1a1d);
+  opacity: 0.8;
+}
+
+.tips-section {
+  background: rgba(218, 116, 111, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border-left: 3px solid var(--marsala, #da746f);
+}
+
+.tips-section strong {
+  color: var(--black, #1a1a1d);
+}
+
+.tips-section p {
+  margin: 8px 0 0 0;
+  color: var(--black, #1a1a1d);
+  font-size: 14px;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.selection-indicator {
+  text-align: center;
+  padding: 10px;
+  font-weight: 600;
+  color: var(--marsala, #da746f);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 10px;
+}
+
+.habit-suggestion-card.selected .selection-indicator {
+  color: var(--red, #d6304c);
+}
+
+.community-challenges,
+.my-challenges {
+  background: var(--white, #fffafe);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: var(--card-shadow, 0 10px 40px rgba(0, 0, 0, 0.1));
+}
+
+.coming-soon {
+  color: var(--black, #1a1a1d);
+  opacity: 0.8;
+}
+
+.coming-soon p {
+  margin: 10px 0;
+  font-size: 1.1rem;
+}
+
+/* API Key Notice - Updated Colors */
+.api-notice {
+  background: rgba(218, 116, 111, 0.1);
+  border: 1px solid rgba(218, 116, 111, 0.3);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 15px auto;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--black, #1a1a1d);
+}
+
+.notice-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.api-link {
+  color: var(--red, #d6304c);
+  text-decoration: none;
+  font-weight: 600;
+  margin: 0 5px;
+  border-bottom: 1px solid var(--red, #d6304c);
+}
+
+.api-link:hover {
+  color: var(--marsala, #da746f);
+  border-bottom-color: var(--marsala, #da746f);
+}
+
+/* Error Message - Updated Colors */
+.error-message {
+  background: rgba(220, 53, 69, 0.1);
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  color: var(--black, #1a1a1d);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 10px 0;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Fallback Notice - Updated Colors */
+.fallback-notice {
+  background: rgba(218, 116, 111, 0.1);
+  border: 1px solid rgba(218, 116, 111, 0.3);
+  color: var(--black, #1a1a1d);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin: 10px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.fallback-icon {
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* Loading enhancements */
+.loading-suggestions small {
+  display: block;
+  margin-top: 8px;
+  opacity: 0.7;
+  font-size: 12px;
+  color: var(--black, #1a1a1d);
+}
+
+/* API Status Colors */
+.api-success {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.3);
+  color: var(--black, #1a1a1d);
+}
+
+.api-warning {
+  background: rgba(218, 116, 111, 0.1);
+  border: 1px solid rgba(218, 116, 111, 0.3);
+  color: var(--black, #1a1a1d);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .challenges-container {
+    padding: 10px;
+  }
+  
+  .goal-input-container {
+    flex-direction: column;
+  }
+  
+  .suggestions-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .habit-details {
+    grid-template-columns: 1fr;
+  }
+  
+  .selection-info {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .challenges-tabs {
+    flex-direction: column;
+    border-radius: 15px;
+  }
+  
+  .quick-goals-buttons {
+    grid-template-columns: 1fr;
+  }
+  
+  .api-notice {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+  
+  .fallback-notice {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}
+
+/* CSS Variables for consistency */
+.challenges-container {
+  --red: #d6304c;
+  --marsala: #da746f;
+  --black: #1a1a1d;
+  --white: #fffafe;
+  --bg: #fff6f5;
+  --card-shadow: 0 8px 28px rgba(26, 26, 29, 0.10);
+}

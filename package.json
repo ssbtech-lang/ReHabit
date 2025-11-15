@@ -17,6 +17,7 @@
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
     "mongoose": "^8.19.3",
+    "multer": "^2.0.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^6.30.1",

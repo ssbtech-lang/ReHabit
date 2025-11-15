@@ -496,7 +496,553 @@ app.delete('/api/habits/:id', authenticateToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Add these near the top with other requires
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
+// Configure multer for image uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadDir = 'uploads/';
+    if (!fs.existsSync(uploadDir)) {
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
+
+// Serve uploaded files statically
+app.use('/uploads', express.static('uploads'));
+
+// ============================================
+// GROUP PROOFS ROUTES
+// ============================================
+
+// Group Schema
+const groupSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  description: String,
+  habit: {
+    type: String,
+    required: true
+  },
+  proofType: {
+    type: String,
+    enum: ['image', 'text', 'audio'],
+    default: 'text'
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  members: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    joinedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+// Post Schema
+const postSchema = new mongoose.Schema({
+  groupId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  content: {
+    type: String,
+    required: true
+  },
+  proofType: {
+    type: String,
+    enum: ['image', 'text', 'audio'],
+    default: 'text'
+  },
+  imageUrl: String,
+  reactions: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    emoji: {
+      type: String,
+      default: '👍'
+    },
+    reactedAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  comments: [{
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    text: String,
+    createdAt: {
+      type: Date,
+      default: Date.now
+    }
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
+});
+
+const Group = mongoose.model('Group', groupSchema);
+const Post = mongoose.model('Post', postSchema);
+
+// Create a new group
+app.post('/api/groups', authenticateToken, async (req, res) => {
+  try {
+    const { name, description, habit, proofType, usernames } = req.body;
+    const userId = req.user.userId;
+
+    // Find users by usernames
+    const usersToAdd = await User.find({ 
+      username: { $in: usernames } 
+    });
+
+    if (usersToAdd.length !== usernames.length) {
+      return res.status(400).json({
+        success: false,
+        message: 'Some users were not found'
+      });
+    }
+
+    // Create group with creator as first member
+    const group = new Group({
+      name,
+      description,
+      habit,
+      proofType,
+      createdBy: userId,
+      members: [
+        {
+          user: userId,
+          joinedAt: new Date()
+        },
+        ...usersToAdd.map(user => ({
+          user: user._id,
+          joinedAt: new Date()
+        }))
+      ]
+    });
+
+    await group.save();
+    
+    // Populate the created group with member details
+    const populatedGroup = await Group.findById(group._id)
+      .populate('members.user', 'username')
+      .populate('createdBy', 'username');
+
+    res.status(201).json({
+      success: true,
+      message: 'Group created successfully',
+      group: populatedGroup
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating group:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get all groups for user
+app.get('/api/groups', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const groups = await Group.find({
+      'members.user': userId
+    })
+    .populate('members.user', 'username')
+    .populate('createdBy', 'username')
+    .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      groups
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching groups:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get single group with posts
+// Get single group with posts - ENHANCED SECURITY
+app.get('/api/groups/:groupId', authenticateToken, async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    console.log('🔍 Accessing group:', groupId, 'by user:', userId);
+
+    // Check if user is member of the group with proper ObjectId comparison
+    const group = await Group.findOne({
+      _id: groupId,
+      'members.user': mongoose.Types.ObjectId.createFromHexString(userId)
+    })
+    .populate('members.user', 'username email')
+    .populate('createdBy', 'username');
+
+    if (!group) {
+      console.log('❌ Access denied: User not in group or group not found');
+      return res.status(403).json({
+        success: false,
+        message: 'Access denied: You are not a member of this group'
+      });
+    }
+
+    console.log('✅ Group access granted:', group.name);
+
+    // Get posts for this group
+    const posts = await Post.find({ groupId })
+      .populate('userId', 'username')
+      .populate('reactions.userId', 'username')
+      .populate('comments.userId', 'username')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      group,
+      posts
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching group:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Upload image for post
+app.post('/api/upload', authenticateToken, upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'No image file provided'
+      });
+    }
+
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    
+    res.json({
+      success: true,
+      imageUrl,
+      message: 'Image uploaded successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error uploading image:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error uploading image'
+    });
+  }
+});
+
+// Create a post in group
+app.post('/api/groups/:groupId/posts', authenticateToken, async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const { content, proofType, imageUrl } = req.body;
+    const userId = req.user.userId;
+
+    // Check if user is member of the group
+    const group = await Group.findOne({
+      _id: groupId,
+      'members.user': userId
+    });
+
+    if (!group) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not a member of this group'
+      });
+    }
+
+    const post = new Post({
+      groupId,
+      userId,
+      content,
+      proofType: proofType || group.proofType,
+      imageUrl
+    });
+
+    await post.save();
+
+    // Populate the post with user info
+    const populatedPost = await Post.findById(post._id)
+      .populate('userId', 'username')
+      .populate('reactions.userId', 'username')
+      .populate('comments.userId', 'username');
+
+    res.status(201).json({
+      success: true,
+      message: 'Post created successfully',
+      post: populatedPost
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating post:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Add reaction to post
+app.post('/api/posts/:postId/reactions', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { emoji } = req.body;
+    const userId = req.user.userId;
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    // Remove existing reaction from this user
+    post.reactions = post.reactions.filter(
+      reaction => !reaction.userId.equals(userId)
+    );
+
+    // Add new reaction
+    post.reactions.push({
+      userId,
+      emoji: emoji || '👍'
+    });
+
+    await post.save();
+
+    // Populate reactions
+    await post.populate('reactions.userId', 'username');
+
+    res.json({
+      success: true,
+      message: 'Reaction added',
+      reactions: post.reactions
+    });
+
+  } catch (error) {
+    console.error('❌ Error adding reaction:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Add comment to post
+app.post('/api/posts/:postId/comments', authenticateToken, async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const { text } = req.body;
+    const userId = req.user.userId;
+
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    post.comments.push({
+      userId,
+      text
+    });
+
+    await post.save();
+
+    // Populate the new comment
+    await post.populate('comments.userId', 'username');
+
+    const newComment = post.comments[post.comments.length - 1];
+
+    res.status(201).json({
+      success: true,
+      message: 'Comment added',
+      comment: newComment
+    });
+
+  } catch (error) {
+    console.error('❌ Error adding comment:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Leave group
+app.delete('/api/groups/:groupId/leave', authenticateToken, async (req, res) => {
+  try {
+    const { groupId } = req.params;
+    const userId = req.user.userId;
+
+    const group = await Group.findById(groupId);
+
+    if (!group) {
+      return res.status(404).json({
+        success: false,
+        message: 'Group not found'
+      });
+    }
+
+    // Remove user from members
+    group.members = group.members.filter(
+      member => !member.user.equals(userId)
+    );
+
+    // If no members left, delete the group
+    if (group.members.length === 0) {
+      await Group.findByIdAndDelete(groupId);
+      await Post.deleteMany({ groupId });
+    } else {
+      await group.save();
+    }
+
+    res.json({
+      success: true,
+      message: 'Left group successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error leaving group:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Search users for adding to group
+app.get('/api/users/search', authenticateToken, async (req, res) => {
+  try {
+    const { query } = req.query;
+    const userId = req.user.userId;
+
+    if (!query || query.length < 2) {
+      return res.json({
+        success: true,
+        users: []
+      });
+    }
+
+    const users = await User.find({
+      _id: { $ne: userId }, // Exclude current user
+      username: { $regex: query, $options: 'i' }
+    }).select('username').limit(10);
+
+    res.json({
+      success: true,
+      users
+    });
+
+  } catch (error) {
+    console.error('❌ Error searching users:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+// Get all groups for user - FIXED VERSION
+// Get all groups for user - FIXED VERSION
+app.get('/api/groups', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    console.log('🔍 Fetching groups for user ID:', userId);
+
+    // FIXED: Use proper ObjectId comparison and better query
+    const groups = await Group.find({
+      'members.user': mongoose.Types.ObjectId.createFromHexString(userId)
+    })
+    .populate('members.user', 'username email')
+    .populate('createdBy', 'username')
+    .sort({ createdAt: -1 });
+
+    console.log('✅ Groups found for user:', groups.length);
+    
+    // Log group details for debugging
+    groups.forEach(group => {
+      console.log(`📦 Group: ${group.name}, Members:`, 
+        group.members.map(m => m.user?.username || 'Unknown')
+      );
+    });
+
+    res.json({
+      success: true,
+      groups
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching groups:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
     console.log(`🚀 ReHabit Backend Server running on port ${PORT}`);
