@@ -1,6 +1,6 @@
 // components/Signup.js
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Add this import
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './AuthForms.css';
 
 const Signup = () => {
@@ -12,7 +12,19 @@ const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
+
+  // Reset state when component mounts
+  useEffect(() => {
+    setError('');
+    setFormData({
+      username: '',
+      email: '',
+      password: ''
+    });
+    setShowPassword(false);
+    setIsLoading(false);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +32,6 @@ const Signup = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -29,7 +40,6 @@ const Signup = () => {
     setIsLoading(true);
     setError('');
 
-    // Basic validation
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
       setIsLoading(false);
@@ -43,7 +53,7 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch('https://rehabit-0wfi.onrender.com/api/signup', {
+      const response = await fetch('http://localhost:5000/api/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,12 +64,8 @@ const Signup = () => {
       const data = await response.json();
 
       if (data.success) {
-        // Save token to localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        
-        console.log('Signup successful:', data);
-        // Redirect to dashboard after successful signup
         navigate('/dashboard');
       } else {
         setError(data.message || 'Signup failed');
@@ -72,7 +78,6 @@ const Signup = () => {
     }
   };
 
-  // Navigate to login page
   const handleLoginRedirect = () => {
     navigate('/login');
   };
@@ -220,8 +225,9 @@ const Signup = () => {
                 Already have an account?{' '}
                 <button 
                   className="link-btn" 
-                  onClick={handleLoginRedirect} // Use the navigation function
+                  onClick={handleLoginRedirect}
                   disabled={isLoading}
+                  type="button"
                 >
                   Sign in
                 </button>
