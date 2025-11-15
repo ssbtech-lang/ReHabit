@@ -865,7 +865,7 @@ export default function LandingPage() {
         <a href="#features" onClick={() => setMenuOpen(false)}>Features</a>
         <a href="#about" onClick={() => setMenuOpen(false)}>About</a>
         <a href="#pricing" onClick={() => setMenuOpen(false)}>Pricing</a>
-        <a href="/signup" className="nav-cta" onClick={() => setMenuOpen(false)}>Get Started</a>
+        <button className="hero-cta-primary" onClick={() => navigate('/signup')}>Get Started</button>
       </div>
 
       {/* ENHANCED HERO SECTION */}
@@ -984,9 +984,7 @@ export default function LandingPage() {
         <div className="cta-content">
           <h2>Ready to Build Better Habits?</h2>
           <p>Join thousands who transformed their lives through consistent action. Start your journey with HabitSync today — completely free.</p>
-          <a href="/signup" className="cta-button">
-            <span>Get Started Now</span>
-          </a>
+          <button className="cta-button" onClick={() => navigate('/signup')}>Get Started Now</button>
         </div>
       </section>
     </div>
