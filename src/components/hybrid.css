@@ -802,7 +802,7 @@
 }
 
 .week-day.today .wd-date {
-  color: #d6304c; /* Your red color */
+  color: white; /* Your red color */
   font-weight: 700;
 }
 
@@ -836,4 +836,89 @@
   border-radius: 50%;
   background: transparent;
   margin-top: 2px;
+}
+
+/* Performance Analytics Marquee */
+.performance-marquee {
+  background: linear-gradient(135deg, #d87d8c 0%, #d87d8c 100%);
+  color: white;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.marquee-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.motivational-text {
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+  min-width: 300px;
+  text-align: center;
+}
+
+.performance-stats {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.stat-badge {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.trend-up {
+  background: rgba(76, 175, 80, 0.3);
+  border-color: rgba(76, 175, 80, 0.5);
+}
+
+.trend-down {
+  background: rgba(244, 67, 54, 0.3);
+  border-color: rgba(244, 67, 54, 0.5);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .marquee-content {
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
+  
+  .motivational-text {
+    min-width: auto;
+    font-size: 13px;
+  }
+  
+  .performance-stats {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .performance-marquee {
+    padding: 10px 15px;
+  }
+  
+  .motivational-text {
+    font-size: 12px;
+  }
+  
+  .stat-badge {
+    font-size: 11px;
+    padding: 3px 6px;
+  }
 }

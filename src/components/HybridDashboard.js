@@ -7,6 +7,7 @@ import BottomNavHybrid from "./BottomNavHybrid";
 import AddHabit from "./AddHabit";
 import "./hybrid.css";
 import ProfilePanel from "./ProfilePanel";
+import PerformanceAnalytics from "./PerformanceAnalytics";
 
 function uid(prefix = "id") {
   return prefix + Math.random().toString(36).slice(2, 9);
@@ -457,6 +458,12 @@ const getCurrentHabitData = () => {
           onDateSelect={(dateKey) => setSelectedDate(dateKey)}
           selectedDate={selectedDate}
         />
+
+         {/* ⭐ NEW: Add Performance Analytics Marquee */}
+      <PerformanceAnalytics 
+        habits={habits}
+        selectedDate={selectedDate}
+      />
 
         <main className="hybrid-main">
           <section className="habits-column">

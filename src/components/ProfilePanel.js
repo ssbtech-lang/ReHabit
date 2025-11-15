@@ -149,10 +149,10 @@ export default function ProfilePanel({ user, onClose, onUserUpdate }) {
         </div>
 
         <div className="pp-stats">
-          <div className="pp-stat">
+          {/* <div className="pp-stat">
             <div className="pp-stat-value">{stats.streak || 0}</div>
             <div className="pp-stat-label">Streak</div>
-          </div>
+          </div> */}
 
           <div className="pp-stat">
             <div className="pp-stat-value">{stats.habits || 0}</div>

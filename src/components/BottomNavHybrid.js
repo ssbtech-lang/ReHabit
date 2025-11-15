@@ -31,22 +31,31 @@ export default function BottomNavHybrid({ onProfileClick }) {
         <span className="label">Calendar</span>
       </div>
 
-      {/* Streak */}
-      <div
-        className={`nav-item ${isActive("/streak") ? "active" : ""}`}
-        onClick={() => navigate("/streak")}
+      {/* Streak Battles */}
+      {/* <div
+        className={`nav-item ${isActive("/streak-battles") ? "active" : ""}`}
+        onClick={() => navigate("/streak-battles")}
       >
-        <span className="icon">🔥</span>
-        <span className="label">Streak</span>
-      </div>
+        <span className="icon">⚔️</span>
+        <span className="label">Battles</span>
+      </div> */}
 
-      {/* Challenges - NEW */}
+      {/* Challenges */}
       <div
         className={`nav-item ${isActive("/challenges") ? "active" : ""}`}
         onClick={() => navigate("/challenges")}
       >
         <span className="icon">🏆</span>
         <span className="label">Challenges</span>
+      </div>
+
+      {/* Notifications */}
+      <div
+        className={`nav-item ${isActive("/notifications") ? "active" : ""}`}
+        onClick={() => navigate("/notifications")}
+      >
+        <span className="icon">🔔</span>
+        <span className="label">Alerts</span>
       </div>
 
       {/* Profile — NOW OPENS SLIDE PANEL */}

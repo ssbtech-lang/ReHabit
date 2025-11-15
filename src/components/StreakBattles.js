@@ -157,11 +157,12 @@ export default function StreakBattles() {
     }
   };
 
-  // Send nudge to opponent
+  // Send nudge to opponent - Now creates a notification
   const sendNudge = async (battleId) => {
     try {
+      console.log(`💌 Sending nudge for battle: ${battleId}`);
       await api.post(`/streak-battles/${battleId}/nudge`);
-      alert('💌 Nudge sent! Your opponent will be encouraged to keep their streak!');
+      alert('💌 Nudge sent! Your opponent will receive a notification.');
     } catch (error) {
       console.error('Error sending nudge:', error);
       alert('Error sending nudge: ' + (error.response?.data?.message || error.message));
@@ -494,6 +495,7 @@ export default function StreakBattles() {
                     className="btn-secondary"
                     onClick={() => sendNudge(battle._id)}
                     disabled={opponentCompletedToday}
+                    title="Send a reminder notification to your opponent"
                   >
                     {opponentCompletedToday ? '✅ Opponent Completed' : '💌 Send Nudge'}
                   </button>
