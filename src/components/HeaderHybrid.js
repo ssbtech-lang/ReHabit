@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function HeaderHybrid({ total = 0, doneToday = 0, xp = 0, onDateSelect }) {
+export default function HeaderHybrid({ 
+  total = 0, 
+  doneToday = 0, 
+  xp = 0, 
+  onDateSelect,
+  selectedDate
+}) {
 
   const getLast7Days = () => {
     const days = [];
@@ -23,12 +29,17 @@ export default function HeaderHybrid({ total = 0, doneToday = 0, xp = 0, onDateS
       <div className="week-strip">
         {weekDays.map((date, i) => {
           const isToday = i === 6;
-          const dateKey = date.toISOString().slice(0, 10);
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          const dateKey = `${year}-${month}-${day}`;
+          
+          const isSelected = dateKey === selectedDate;
 
           return (
             <div
               key={i}
-              className={`week-day ${isToday ? "active" : ""}`}
+              className={`week-day ${isToday ? "today" : ""} ${isSelected ? "selected" : ""}`}
               onClick={() => onDateSelect(dateKey)}
             >
               <div className="wd-name">{dayNames[date.getDay()]}</div>

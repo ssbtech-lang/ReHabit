@@ -419,252 +419,254 @@ export default function GroupProofs() {
   // Group List View
   if (activeView === "list") {
     return (
-      <div className="group-proofs-container">
-        <div className="section-header">
-          <h2>Group Accountability</h2>
-          <div style={{ display: 'flex', gap: '10px' }}>
-            <button 
-              className="btn-secondary"
-              onClick={handleRefresh}
-              disabled={loading}
-            >
-              🔄 Refresh
-            </button>
-            <button 
-              className="btn-primary"
-              onClick={() => setShowCreateModal(true)}
-            >
-              + Create Group
-            </button>
-          </div>
-        </div>
-
-        <div style={{ marginBottom: '15px', padding: '10px', background: '#f5f5f5', borderRadius: '5px' }}>
-          <strong>Current User:</strong> {currentUser?.username} | <strong>Groups:</strong> {groups.length}
-        </div>
-
-        {loading ? (
-          <div className="loading-state">
-            <div className="loading-spinner"></div>
-            Loading groups...
-          </div>
-        ) : groups.length === 0 ? (
-          <div className="empty-state">
-            <div className="empty-icon">👥</div>
-            <h3>No Groups Yet</h3>
-            <p>You are not a member of any groups. Create your first group or ask to be added to existing ones!</p>
-            <button 
-              className="btn-primary"
-              onClick={() => setShowCreateModal(true)}
-            >
-              Create Your First Group
-            </button>
-          </div>
-        ) : (
-          <div className="groups-grid">
-            {groups.map(group => (
-              <div 
-                key={group._id} 
-                className="group-card"
-                onClick={() => fetchGroupDetails(group._id)}
+      <div className="group-proofs-scope">
+        <div className="group-proofs-container">
+          <div className="section-header">
+            <h2>Group Accountability</h2>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                className="btn-secondary"
+                onClick={handleRefresh}
+                disabled={loading}
               >
-                <div className="group-card-header">
-                  <div className="group-avatar">
-                    {group.name.charAt(0).toUpperCase()}
-                  </div>
-                  <div className="group-info">
-                    <h3>{group.name}</h3>
-                    <p className="group-members">
-                      {group.members?.length || 0} members • {group.habit}
-                    </p>
-                    <p className="group-members-list">
-                      Members: {group.members?.map(m => m.user?.username).join(', ')}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="group-stats">
-                  <div className="stat">
-                    <span className="stat-value">{group.members?.length || 0}</span>
-                    <span className="stat-label">Members</span>
-                  </div>
-                  <div className="stat">
-                    <span className="stat-value">
-                      {group.proofType === "image" ? "📸" : 
-                       group.proofType === "audio" ? "🎵" : "📝"}
-                    </span>
-                    <span className="stat-label">Proofs</span>
-                  </div>
-                </div>
-
-                <div className="group-actions">
-                  <button className="btn-primary full-width">
-                    Enter Group
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Create Group Modal */}
-        {showCreateModal && (
-          <div className="modal-backdrop" onClick={() => setShowCreateModal(false)}>
-            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h3>Create New Group</h3>
-                <button 
-                  className="close-btn"
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    resetCreateForm();
-                  }}
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="modal-body">
-                <div className="form-group">
-                  <label>Group Name *</label>
-                  <input
-                    type="text"
-                    value={newGroup.name}
-                    onChange={(e) => setNewGroup(prev => ({
-                      ...prev, name: e.target.value
-                    }))}
-                    placeholder="e.g., Fitness Warriors"
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Description</label>
-                  <textarea
-                    value={newGroup.description}
-                    onChange={(e) => setNewGroup(prev => ({
-                      ...prev, description: e.target.value
-                    }))}
-                    placeholder="What's this group about?"
-                    rows="3"
-                    className="form-textarea"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Habit Focus *</label>
-                  <input
-                    type="text"
-                    value={newGroup.habit}
-                    onChange={(e) => setNewGroup(prev => ({
-                      ...prev, habit: e.target.value
-                    }))}
-                    placeholder="e.g., Daily Exercise, Reading, Meditation"
-                    className="form-input"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Proof Type</label>
-                  <select
-                    value={newGroup.proofType}
-                    onChange={(e) => setNewGroup(prev => ({
-                      ...prev, proofType: e.target.value
-                    }))}
-                    className="form-select"
-                  >
-                    <option value="text">📝 Text Update</option>
-                    <option value="image">📸 Image Proof</option>
-                    <option value="audio">🎵 Audio Note</option>
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label>Add Members (by username) *</label>
-                  <div className="search-container">
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => {
-                        setSearchQuery(e.target.value);
-                        searchUsers(e.target.value);
-                      }}
-                      placeholder="Search users..."
-                      className="form-input"
-                    />
-                    {searchResults.length > 0 && (
-                      <div className="search-results">
-                        {searchResults.map(user => (
-                          <div
-                            key={user._id}
-                            className="search-result-item"
-                            onClick={() => {
-                              if (!newGroup.usernames.includes(user.username)) {
-                                addUsernameField();
-                                updateUsername(newGroup.usernames.length - 1, user.username);
-                              }
-                              setSearchQuery("");
-                              setSearchResults([]);
-                            }}
-                          >
-                            {user.username}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {newGroup.usernames.map((username, index) => (
-                    <div key={index} className="username-input-row">
-                      <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => updateUsername(index, e.target.value)}
-                        placeholder="Enter username"
-                        className="form-input"
-                      />
-                      {newGroup.usernames.length > 1 && (
-                        <button
-                          type="button"
-                          className="remove-btn"
-                          onClick={() => removeUsernameField(index)}
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    className="btn-secondary"
-                    onClick={addUsernameField}
-                  >
-                    + Add Another Member
-                  </button>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  className="btn-secondary"
-                  onClick={() => {
-                    setShowCreateModal(false);
-                    resetCreateForm();
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="btn-primary"
-                  onClick={createGroup}
-                  disabled={!newGroup.name.trim() || !newGroup.habit.trim()}
-                >
-                  Create Group
-                </button>
-              </div>
+                🔄 Refresh
+              </button>
+              <button 
+                className="btn-primary"
+                onClick={() => setShowCreateModal(true)}
+              >
+                + Create Group
+              </button>
             </div>
           </div>
-        )}
+
+          <div style={{ marginBottom: '15px', padding: '10px', background: '#f5f5f5', borderRadius: '5px' }}>
+            <strong>Current User:</strong> {currentUser?.username} | <strong>Groups:</strong> {groups.length}
+          </div>
+
+          {loading ? (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              Loading groups...
+            </div>
+          ) : groups.length === 0 ? (
+            <div className="empty-state">
+              <div className="empty-icon">👥</div>
+              <h3>No Groups Yet</h3>
+              <p>You are not a member of any groups. Create your first group or ask to be added to existing ones!</p>
+              <button 
+                className="btn-primary"
+                onClick={() => setShowCreateModal(true)}
+              >
+                Create Your First Group
+              </button>
+            </div>
+          ) : (
+            <div className="groups-grid">
+              {groups.map(group => (
+                <div 
+                  key={group._id} 
+                  className="group-card"
+                  onClick={() => fetchGroupDetails(group._id)}
+                >
+                  <div className="group-card-header">
+                    <div className="group-avatar">
+                      {group.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="group-info">
+                      <h3>{group.name}</h3>
+                      <p className="group-members">
+                        {group.members?.length || 0} members • {group.habit}
+                      </p>
+                      <p className="group-members-list">
+                        Members: {group.members?.map(m => m.user?.username).join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="group-stats">
+                    <div className="stat">
+                      <span className="stat-value">{group.members?.length || 0}</span>
+                      <span className="stat-label">Members</span>
+                    </div>
+                    <div className="stat">
+                      <span className="stat-value">
+                        {group.proofType === "image" ? "📸" : 
+                         group.proofType === "audio" ? "🎵" : "📝"}
+                      </span>
+                      <span className="stat-label">Proofs</span>
+                    </div>
+                  </div>
+
+                  <div className="group-actions">
+                    <button className="btn-primary full-width">
+                      Enter Group
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Create Group Modal */}
+          {showCreateModal && (
+            <div className="modal-backdrop" onClick={() => setShowCreateModal(false)}>
+              <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-header">
+                  <h3>Create New Group</h3>
+                  <button 
+                    className="close-btn"
+                    onClick={() => {
+                      setShowCreateModal(false);
+                      resetCreateForm();
+                    }}
+                  >
+                    ×
+                  </button>
+                </div>
+
+                <div className="modal-body">
+                  <div className="form-group">
+                    <label>Group Name *</label>
+                    <input
+                      type="text"
+                      value={newGroup.name}
+                      onChange={(e) => setNewGroup(prev => ({
+                        ...prev, name: e.target.value
+                      }))}
+                      placeholder="e.g., Fitness Warriors"
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Description</label>
+                    <textarea
+                      value={newGroup.description}
+                      onChange={(e) => setNewGroup(prev => ({
+                        ...prev, description: e.target.value
+                      }))}
+                      placeholder="What's this group about?"
+                      rows="3"
+                      className="form-textarea"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Habit Focus *</label>
+                    <input
+                      type="text"
+                      value={newGroup.habit}
+                      onChange={(e) => setNewGroup(prev => ({
+                        ...prev, habit: e.target.value
+                      }))}
+                      placeholder="e.g., Daily Exercise, Reading, Meditation"
+                      className="form-input"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Proof Type</label>
+                    <select
+                      value={newGroup.proofType}
+                      onChange={(e) => setNewGroup(prev => ({
+                        ...prev, proofType: e.target.value
+                      }))}
+                      className="form-select"
+                    >
+                      <option value="text">📝 Text Update</option>
+                      <option value="image">📸 Image Proof</option>
+                      <option value="audio">🎵 Audio Note</option>
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Add Members (by username) *</label>
+                    <div className="search-container">
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          searchUsers(e.target.value);
+                        }}
+                        placeholder="Search users..."
+                        className="form-input"
+                      />
+                      {searchResults.length > 0 && (
+                        <div className="search-results">
+                          {searchResults.map(user => (
+                            <div
+                              key={user._id}
+                              className="search-result-item"
+                              onClick={() => {
+                                if (!newGroup.usernames.includes(user.username)) {
+                                  addUsernameField();
+                                  updateUsername(newGroup.usernames.length - 1, user.username);
+                                }
+                                setSearchQuery("");
+                                setSearchResults([]);
+                              }}
+                            >
+                              {user.username}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {newGroup.usernames.map((username, index) => (
+                      <div key={index} className="username-input-row">
+                        <input
+                          type="text"
+                          value={username}
+                          onChange={(e) => updateUsername(index, e.target.value)}
+                          placeholder="Enter username"
+                          className="form-input"
+                        />
+                        {newGroup.usernames.length > 1 && (
+                          <button
+                            type="button"
+                            className="remove-btn"
+                            onClick={() => removeUsernameField(index)}
+                          >
+                            ×
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={addUsernameField}
+                    >
+                      + Add Another Member
+                    </button>
+                  </div>
+                </div>
+
+                <div className="modal-actions">
+                  <button
+                    className="btn-secondary"
+                    onClick={() => {
+                      setShowCreateModal(false);
+                      resetCreateForm();
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className="btn-primary"
+                    onClick={createGroup}
+                    disabled={!newGroup.name.trim() || !newGroup.habit.trim()}
+                  >
+                    Create Group
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

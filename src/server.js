@@ -456,6 +456,7 @@ app.get('/api/habits', authenticateToken, async (req, res) => {
 });
 
 // Update a habit (only if it belongs to the authenticated user)
+// Update habit and also update linked streak battle
 app.put('/api/habits/:id', authenticateToken, async (req, res) => {
   try {
     const habit = await Habit.findOne({ 
@@ -467,8 +468,59 @@ app.put('/api/habits/:id', authenticateToken, async (req, res) => {
       return res.status(404).json({ error: 'Habit not found' });
     }
 
+    // Store old history to detect changes
+    const oldHistory = new Map(habit.history);
+    
+    // Update habit with new data
     Object.assign(habit, req.body);
     await habit.save();
+
+    // ⭐ CRITICAL: If this habit is linked to a streak battle, update the battle too
+    if (habit.streakBattleId) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayKey = today.toISOString().split('T')[0];
+      
+      // Check if today's completion status changed
+      const oldTodayStatus = oldHistory.get(todayKey);
+      const newTodayStatus = habit.history.get(todayKey);
+      
+      if (oldTodayStatus !== newTodayStatus) {
+        // Update the streak battle
+        const battle = await StreakBattle.findById(habit.streakBattleId);
+        if (battle) {
+          const participant = battle.participants.find(p => 
+            p.user.toString() === req.user.userId
+          );
+          
+          if (participant) {
+            const lastUpdate = participant.lastUpdate ? new Date(participant.lastUpdate) : null;
+            
+            // Only update if not already updated today
+            if (!lastUpdate || lastUpdate.toDateString() !== today.toDateString()) {
+              const completed = newTodayStatus === 'completed' || newTodayStatus === 'done';
+              
+              if (completed) {
+                participant.currentStreak += 1;
+                participant.totalPoints += 10;
+              } else {
+                participant.currentStreak = 0;
+              }
+              
+              participant.lastUpdate = new Date();
+              participant.streakHistory.push({
+                date: new Date(),
+                completed: completed
+              });
+              
+              await battle.save();
+              console.log(`✅ Updated streak battle for habit: ${habit.habitName}`);
+            }
+          }
+        }
+      }
+    }
+
     console.log('✅ Habit updated:', habit.habitName);
     res.json(habit);
   } catch (err) {
@@ -476,26 +528,81 @@ app.put('/api/habits/:id', authenticateToken, async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 });
-
-// Delete a habit (only if it belongs to the authenticated user)
-app.delete('/api/habits/:id', authenticateToken, async (req, res) => {
+// Sync battle streak from habit update (called from frontend when habit is marked done)
+app.post('/api/streak-battles/:battleId/sync-from-habit', authenticateToken, async (req, res) => {
   try {
-    const habit = await Habit.findOneAndDelete({ 
-      _id: req.params.id, 
-      userId: req.user.userId 
-    });
+    const { battleId } = req.params;
+    const { completed } = req.body;
+    const userId = req.user.userId;
 
-    if (!habit) {
-      return res.status(404).json({ error: 'Habit not found' });
+    const battle = await StreakBattle.findById(battleId);
+    if (!battle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Battle not found'
+      });
     }
 
-    console.log('✅ Habit deleted:', habit.habitName);
-    res.json({ message: 'Habit deleted successfully', id: req.params.id });
-  } catch (err) {
-    console.error('❌ Error deleting habit:', err);
-    res.status(500).json({ error: err.message });
+    // Find participant
+    const participant = battle.participants.find(p => 
+      p.user.toString() === userId
+    );
+
+    if (!participant) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not a participant in this battle'
+      });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check if already updated today
+    const lastUpdate = participant.lastUpdate ? new Date(participant.lastUpdate) : null;
+    if (lastUpdate && lastUpdate.toDateString() === today.toDateString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Streak already updated for today'
+      });
+    }
+
+    // Update streak
+    if (completed) {
+      participant.currentStreak += 1;
+      participant.totalPoints += 10;
+    } else {
+      participant.currentStreak = 0;
+    }
+
+    participant.lastUpdate = new Date();
+    participant.streakHistory.push({
+      date: new Date(),
+      completed: completed
+    });
+
+    await battle.save();
+
+    // Populate and return updated battle
+    const updatedBattle = await StreakBattle.findById(battleId)
+      .populate('participants.user', 'username')
+      .populate('createdBy', 'username');
+
+    res.json({
+      success: true,
+      message: 'Battle streak synced from habit',
+      battle: updatedBattle
+    });
+
+  } catch (error) {
+    console.error('❌ Error syncing battle from habit:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
   }
 });
+
 // Add these near the top with other requires
 const multer = require('multer');
 const path = require('path');
@@ -1037,6 +1144,438 @@ app.get('/api/groups', authenticateToken, async (req, res) => {
 
   } catch (error) {
     console.error('❌ Error fetching groups:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+// Update the create battle route to automatically create habits
+app.post('/api/streak-battles', authenticateToken, async (req, res) => {
+  try {
+    const { opponentUsername, habit, duration, stake } = req.body;
+    const userId = req.user.userId;
+
+    // Find opponent user
+    const opponent = await User.findOne({ username: opponentUsername });
+    if (!opponent) {
+      return res.status(400).json({
+        success: false,
+        message: 'Opponent user not found'
+      });
+    }
+
+    // Calculate end date
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() + duration);
+
+    // Create battle
+    const battle = new StreakBattle({
+      habit,
+      duration,
+      stake,
+      participants: [
+        {
+          user: userId,
+          currentStreak: 0,
+          totalPoints: 0
+        },
+        {
+          user: opponent._id,
+          currentStreak: 0,
+          totalPoints: 0
+        }
+      ],
+      createdBy: userId,
+      endDate
+    });
+
+    await battle.save();
+
+    // ⭐ CRITICAL: Create habits for both users
+    const today = new Date().toISOString().split('T')[0];
+    const battleEndDate = endDate.toISOString().split('T')[0];
+
+    // Create habit for current user
+    const userHabit = new Habit({
+      habitName: `${habit} (vs ${opponent.username})`,
+      description: `Streak battle with ${opponent.username}. Compete to maintain your daily streak!`,
+      startDate: today,
+      endDate: battleEndDate,
+      frequency: "daily",
+      category: "Fitness",
+      userId: userId,
+      streakBattleId: battle._id, // Link habit to battle
+      color: "#d6304c" // Red color for battles
+    });
+
+    // Create habit for opponent
+    const opponentHabit = new Habit({
+      habitName: `${habit} (vs ${req.user.username})`,
+      description: `Streak battle with ${req.user.username}. Compete to maintain your daily streak!`,
+      startDate: today,
+      endDate: battleEndDate,
+      frequency: "daily",
+      category: "Fitness",
+      userId: opponent._id,
+      streakBattleId: battle._id, // Link habit to battle
+      color: "#d6304c" // Red color for battles
+    });
+
+    await Promise.all([userHabit.save(), opponentHabit.save()]);
+
+    // Populate the battle
+    const populatedBattle = await StreakBattle.findById(battle._id)
+      .populate('participants.user', 'username')
+      .populate('createdBy', 'username');
+
+    res.status(201).json({
+      success: true,
+      message: 'Streak battle created successfully',
+      battle: populatedBattle,
+      habitsCreated: true
+    });
+
+  } catch (error) {
+    console.error('❌ Error creating streak battle:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Update streak update route to also update habits
+app.post('/api/streak-battles/:battleId/streak', authenticateToken, async (req, res) => {
+  try {
+    const { battleId } = req.params;
+    const { completed } = req.body;
+    const userId = req.user.userId;
+
+    const battle = await StreakBattle.findById(battleId);
+    if (!battle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Battle not found'
+      });
+    }
+
+    // Find participant
+    const participant = battle.participants.find(p => 
+      p.user.toString() === userId
+    );
+
+    if (!participant) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not a participant in this battle'
+      });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check if already updated today
+    const lastUpdate = participant.lastUpdate ? new Date(participant.lastUpdate) : null;
+    if (lastUpdate && lastUpdate.toDateString() === today.toDateString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Streak already updated for today'
+      });
+    }
+
+    // Update streak
+    if (completed) {
+      participant.currentStreak += 1;
+      participant.totalPoints += 10; // Award points for completion
+    } else {
+      participant.currentStreak = 0;
+    }
+
+    participant.lastUpdate = new Date();
+    participant.streakHistory.push({
+      date: new Date(),
+      completed: completed
+    });
+
+    await battle.save();
+
+    // ⭐ CRITICAL: Also update the linked habit
+    const todayKey = today.toISOString().split('T')[0];
+    
+    // Find and update the habit linked to this battle
+    const userHabit = await Habit.findOne({
+      userId: userId,
+      streakBattleId: battleId
+    });
+
+    if (userHabit) {
+      userHabit.history.set(todayKey, completed ? 'completed' : 'skipped');
+      await userHabit.save();
+    }
+
+    // Populate and return updated battle
+    const updatedBattle = await StreakBattle.findById(battleId)
+      .populate('participants.user', 'username')
+      .populate('createdBy', 'username');
+
+    res.json({
+      success: true,
+      message: 'Streak updated successfully',
+      battle: updatedBattle
+    });
+
+  } catch (error) {
+    console.error('❌ Error updating streak:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Get user's habits including battle habits
+app.get('/api/habits', authenticateToken, async (req, res) => {
+  try {
+    const habits = await Habit.find({ userId: req.user.userId });
+    res.json(habits);
+  } catch (err) {
+    console.error('❌ Error fetching habits:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+// Streak Battle Schema
+const streakBattleSchema = new mongoose.Schema({
+  habit: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  participants: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
+    },
+    currentStreak: {
+      type: Number,
+      default: 0
+    },
+    totalPoints: {
+      type: Number,
+      default: 0
+    },
+    lastUpdate: Date,
+    streakHistory: [{
+      date: Date,
+      completed: Boolean
+    }]
+  }],
+  duration: {
+    type: Number,
+    default: 7
+  },
+  stake: {
+    type: Number,
+    default: 0
+  },
+  status: {
+    type: String,
+    enum: ['active', 'completed'],
+    default: 'active'
+  },
+  startDate: {
+    type: Date,
+    default: Date.now
+  },
+  endDate: Date,
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  winner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
+}, {
+  timestamps: true
+});
+
+const StreakBattle = mongoose.model('StreakBattle', streakBattleSchema);
+
+// Update Habit Schema to include streakBattleId
+// Add this field to your existing HabitSchema
+// streakBattleId: {  
+//   type: mongoose.Schema.Types.ObjectId,
+//   ref: 'StreakBattle',
+//   default: null
+// },
+
+// Get all battles for user
+app.get('/api/streak-battles', authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    
+    const battles = await StreakBattle.find({
+      'participants.user': new mongoose.Types.ObjectId(userId),
+      status: 'active'
+    })
+    .populate('participants.user', 'username')
+    .populate('createdBy', 'username')
+    .sort({ startDate: -1 });
+
+    res.json({
+      success: true,
+      battles
+    });
+
+  } catch (error) {
+    console.error('❌ Error fetching streak battles:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+
+// Send nudge to opponent
+app.post('/api/streak-battles/:battleId/nudge', authenticateToken, async (req, res) => {
+  try {
+    const { battleId } = req.params;
+    const userId = req.user.userId;
+
+    const battle = await StreakBattle.findById(battleId)
+      .populate('participants.user', 'username');
+
+    if (!battle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Battle not found'
+      });
+    }
+
+    // Find opponent
+    const opponent = battle.participants.find(p => 
+      p.user._id.toString() !== userId
+    );
+
+    if (!opponent) {
+      return res.status(400).json({
+        success: false,
+        message: 'Opponent not found'
+      });
+    }
+
+    // Here you would typically send a notification
+    console.log(`💌 Nudge sent to ${opponent.user.username} for battle: ${battle.habit}`);
+
+    res.json({
+      success: true,
+      message: 'Nudge sent successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Error sending nudge:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+});
+// Add this route to your server.js file
+
+// Sync battle streak from habit update (called from frontend when habit is marked done)
+app.post('/api/streak-battles/:battleId/sync-from-habit', authenticateToken, async (req, res) => {
+  try {
+    const { battleId } = req.params;
+    const { completed } = req.body;
+    const userId = req.user.userId;
+
+    console.log('🔄 Syncing battle from habit:', { battleId, userId, completed });
+
+    const battle = await StreakBattle.findById(battleId);
+    if (!battle) {
+      return res.status(404).json({
+        success: false,
+        message: 'Battle not found'
+      });
+    }
+
+    // Find participant
+    const participant = battle.participants.find(p => 
+      p.user.toString() === userId
+    );
+
+    if (!participant) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not a participant in this battle'
+      });
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Check if already updated today
+    const lastUpdate = participant.lastUpdate ? new Date(participant.lastUpdate) : null;
+    if (lastUpdate && lastUpdate.toDateString() === today.toDateString()) {
+      console.log('ℹ️ Streak already updated for today, updating completion status only');
+      
+      // Even if already updated, we might want to update the completion status
+      // Find today's streak history entry
+      const todayHistory = participant.streakHistory.find(entry => {
+        const entryDate = new Date(entry.date);
+        return entryDate.toDateString() === today.toDateString();
+      });
+      
+      if (todayHistory) {
+        todayHistory.completed = completed;
+      }
+      
+      // Update points based on completion
+      if (completed && !todayHistory?.completed) {
+        participant.totalPoints += 10; // Add points if newly completed
+      }
+    } else {
+      // New update for today
+      if (completed) {
+        participant.currentStreak += 1;
+        participant.totalPoints += 10;
+      } else {
+        participant.currentStreak = 0;
+      }
+
+      participant.lastUpdate = new Date();
+      participant.streakHistory.push({
+        date: new Date(),
+        completed: completed
+      });
+    }
+
+    await battle.save();
+
+    // Populate and return updated battle
+    const updatedBattle = await StreakBattle.findById(battleId)
+      .populate('participants.user', 'username')
+      .populate('createdBy', 'username');
+
+    console.log('✅ Battle synced successfully:', {
+      battleId,
+      userId, 
+      completed,
+      newStreak: participant.currentStreak,
+      totalPoints: participant.totalPoints
+    });
+
+    res.json({
+      success: true,
+      message: 'Battle streak synced from habit',
+      battle: updatedBattle
+    });
+
+  } catch (error) {
+    console.error('❌ Error syncing battle from habit:', error);
     res.status(500).json({
       success: false,
       message: 'Internal server error'

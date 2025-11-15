@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./Challenges.css";
 import GroupProofs from "./GroupProofs";
 import AI_suggestions from "./AI_suggestion"; // Import the AI_suggestions component
-
+import StreakBattles from "./StreakBattles";
 export default function Challenges() {
   const [activeTab, setActiveTab] = useState("battles");
   const [streakBattles, setStreakBattles] = useState([]);
@@ -94,69 +94,11 @@ export default function Challenges() {
       <div className="challenges-content">
         
         {/* Streak Battles Tab */}
-        {activeTab === "battles" && (
-          <div className="tab-content">
-            <div className="section-header">
-              <h2>Active Streak Battles</h2>
-              <button className="btn-primary" onClick={startNewBattle}>
-                + New Battle
-              </button>
-            </div>
-
-            {streakBattles.length === 0 ? (
-              <div className="empty-state">
-                <div className="empty-icon">⚔️</div>
-                <h3>No active battles</h3>
-                <p>Challenge a friend to a streak battle and compete!</p>
-                <button className="btn-primary" onClick={startNewBattle}>
-                  Start Your First Battle
-                </button>
-              </div>
-            ) : (
-              <div className="battles-grid">
-                {streakBattles.map(battle => (
-                  <div key={battle.id} className="battle-card">
-                    <div className="battle-header">
-                      <div className="opponent-info">
-                        <span className="avatar">{battle.opponent.avatar}</span>
-                        <span className="name">vs {battle.opponent.name}</span>
-                      </div>
-                      <div className={`status ${battle.status}`}>
-                        {battle.status}
-                      </div>
-                    </div>
-                    
-                    <div className="battle-habit">{battle.habit}</div>
-                    
-                    <div className="streak-comparison">
-                      <div className="streak-item">
-                        <div className="streak-value">{battle.myStreak}</div>
-                        <div className="streak-label">Your Streak</div>
-                      </div>
-                      <div className="vs">🔥</div>
-                      <div className="streak-item">
-                        <div className="streak-value">{battle.opponentStreak}</div>
-                        <div className="streak-label">Opponent</div>
-                      </div>
-                    </div>
-
-                    <div className="battle-actions">
-                      <button 
-                        className="btn-secondary"
-                        onClick={() => sendNudge(battle.id)}
-                      >
-                        💌 Send Nudge
-                      </button>
-                      <button className="btn-primary">
-                        View Details
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+       {activeTab === "battles" && (
+  <div className="tab-content">
+    <StreakBattles />
+  </div>
+)}
 
         {/* Group Proofs Tab */}
         {activeTab === "groups" && (
