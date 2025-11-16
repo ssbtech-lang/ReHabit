@@ -40,6 +40,15 @@ export default function BottomNavHybrid({ onProfileClick }) {
         <span className="label">Battles</span>
       </div> */}
 
+      {/* Streak */}
+      <div
+        className={`nav-item ${isActive("/streak") ? "active" : ""}`}
+        onClick={() => navigate("/streak")}
+      >
+        <span className="icon">🔥</span>
+        <span className="label">Streak</span>
+      </div>
+
       {/* Challenges */}
       <div
         className={`nav-item ${isActive("/challenges") ? "active" : ""}`}

@@ -648,3 +648,144 @@ body.modal-open {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
+
+/* Mobile Responsive Design - Make form scrollable on small devices */
+@media (max-width: 768px) {
+  .add-habit-modal .addHabitFormHybrid {
+    flex-direction: column;
+    min-height: auto;
+    margin: 0;
+    border-radius: 12px;
+    max-width: 95vw;
+    max-height: 90vh; /* Changed from 85vh to 90vh */
+    overflow: hidden;
+  }
+  
+  /* Hide the left section completely on mobile */
+  .add-habit-modal .addHabitLeft {
+    display: none;
+  }
+  
+  /* Make right section take full width and be scrollable */
+  .add-habit-modal .addHabitRight {
+    flex: 1;
+    width: 100%;
+    padding: 50px 25px 25px 25px !important;
+    max-height: none;
+    overflow-y: auto; /* Ensure it's scrollable */
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .add-habit-modal .formHybrid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    flex: 1;
+    overflow-y: auto; /* Make form content scrollable */
+    padding-right: 5px; /* Add some space for scrollbar */
+  }
+  
+  .add-habit-modal .formSection {
+    flex-shrink: 0; /* Prevent sections from shrinking */
+  }
+  
+  .add-habit-modal .formActions {
+    margin-top: auto; /* Push actions to bottom */
+    flex-shrink: 0; /* Prevent actions from shrinking */
+    padding-top: 10px;
+  }
+  
+  .add-habit-modal .closeButton {
+    top: 12px;
+    right: 12px;
+    background: rgba(255, 250, 254, 0.95);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(214, 49, 76, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: fixed; /* Keep close button fixed while scrolling */
+    z-index: 100;
+  }
+  
+  .add-habit-modal .title {
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .add-habit-modal .addHabitFormHybrid {
+    border-radius: 10px;
+    border: 1px solid #d6304c;
+    max-height: 95vh; /* Increased for better scrolling */
+    max-width: 92vw;
+  }
+  
+  .add-habit-modal .addHabitRight {
+    padding: 45px 20px 20px 20px !important;
+  }
+  
+  .add-habit-modal .formHybrid {
+    gap: 16px;
+    padding-right: 3px;
+  }
+  
+  .add-habit-modal .closeButton {
+    top: 10px;
+    right: 10px;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+  }
+}
+
+/* Extra small height devices - Improved scrolling */
+@media (max-height: 600px) and (max-width: 768px) {
+  .add-habit-modal .addHabitFormHybrid {
+    max-height: 98vh; /* Use almost full height */
+  }
+  
+  .add-habit-modal .addHabitRight {
+    padding: 40px 20px 20px 20px !important;
+  }
+  
+  .add-habit-modal .formHybrid {
+    gap: 12px;
+    max-height: calc(98vh - 80px); /* Account for padding */
+  }
+}
+
+/* Modal backdrop styles */
+.hybrid-dashboard .modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(26,26,29,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(2px);
+  padding: 20px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .hybrid-dashboard .modal-backdrop {
+    padding: 15px;
+    align-items: flex-start; /* Allow scrolling from top */
+    overflow-y: auto; /* Enable backdrop scrolling */
+  }
+  
+  .hybrid-dashboard .modal-card {
+    max-height: 90vh;
+    margin: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .hybrid-dashboard .modal-backdrop {
+    padding: 10px;
+    overflow-y: auto; /* Ensure backdrop is scrollable */
+  }
+}
