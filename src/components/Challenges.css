@@ -616,3 +616,51 @@
     display: flex;
   }
 }
+/* Utility Classes for Mobile */
+.challenges-container .mobile-only {
+  display: none;
+}
+
+.challenges-container .desktop-only {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .challenges-container .mobile-only {
+    display: block;
+  }
+  
+  .challenges-container .desktop-only {
+    display: none;
+  }
+}
+
+/* Loading States for Mobile */
+.challenges-container .loading-skeleton {
+  background: linear-gradient(90deg, var(--bg) 25%, var(--white) 50%, var(--bg) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Pull-to-Refresh Friendly */
+.challenges-container .challenges-content {
+  overscroll-behavior-y: contain;
+}
+
+/* Battery Saving Optimizations */
+@media (prefers-reduced-transparency: reduce) {
+  .challenges-container .battle-card,
+  .challenges-container .suggestion-card {
+    backdrop-filter: none;
+  }
+}
