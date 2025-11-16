@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { CheckCircle, TrendingUp, Target, Zap, Menu, X, PlusCircle, BarChart3, Award } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const navigate = useNavigate();
   const features = [
     {
       title: "Smart Tracking",
